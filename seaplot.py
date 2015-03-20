@@ -257,6 +257,9 @@ def make_map(llcrnrlon=-51, urcrnrlon=-30.2, llcrnrlat=-15,
     '''
     This function creates a basemap map easily with option
     of inset axe with geolocation.
+    
+    It's all based on make_map from Filipe Fernandes, but with some
+    changes
     '''
 
 
