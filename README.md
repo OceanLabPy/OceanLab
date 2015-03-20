@@ -21,7 +21,7 @@ I will change it to get better but you have to clone the ocean directory and add
 the path to the directory that have it:
 
 For example:
-If my ocean directory is in my home folder (Linux). You can do it editing bashrc:
+If ocean directory is in home folder (Linux). You can do it editing bashrc:
 
 	oce=/home
 	PYTHONPATH=$oce:$PYTHONPATH
