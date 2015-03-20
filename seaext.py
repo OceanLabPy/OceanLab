@@ -4,7 +4,7 @@
 #Made by Iury Sousa - São Paulo/Brazil
 
 #Some of these functions were based or inspired by other authors
-#as Filipe Fernandes and his scripts published on GitHub or his 
+#like Filipe Fernandes and his scripts published on GitHub or his 
 #website https://ocefpaf.github.io/python4oceanographers/
 #I have a lot to thank for his help, manly giving his time to
 #show his scripts on web.
