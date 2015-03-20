@@ -28,6 +28,9 @@ If ocean directory is in home folder (Linux). You can do it editing bashrc:
 	export PYTHONPATH
 
 Sorry for the lack of comments on some functions but I'm working on it and this is unstable yet.
+Until now, the less commented script is the seaplot.py
+
+WARNING: Be careful with the use of this. It can have errors.
 
 Sao Paulo - SP, march 2015
 
