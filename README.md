@@ -27,6 +27,7 @@ If my ocean directory is in my home folder (Linux). You can do it editing bashrc
 	PYTHONPATH=$oce:$PYTHONPATH
 	export PYTHONPATH
 
+Sorry for the lack of comments on some functions but I'm working on it and this is unstable yet.
 
 Sao Paulo - SP, march 2015
 
