@@ -91,7 +91,51 @@ def return_section(directory):
 	return lat,lon,section
 	
 
-
+def get_lonlat(fname,latline=14,lonline=15):
+    '''
+    Totally based on ctd package from Filipe Fernandes
+    
+    This function  get the Longitude and Latitude.
+    '''
+    f = open(fname)
+    header, config, names = [], [], []
+    for k, line in enumerate(f.readlines()):
+        line = line.strip()
+        if line.startswith('*'):  # Get header.
+            header.append(line)
+        if line.startswith('#'):  # Get configuration file.
+            config.append(line)
+        if k==latline:
+            hemisphere = line.strip()[-1]
+            if line.strip(line.strip()[-1]).split()[1][0]=='L':
+            	lat = [line.strip().split()[2].strip(),line.strip().split()[3].strip()]
+            else:
+            	lat = [line.strip().split()[1].strip(),line.strip().split()[2].strip()]
+            lat = np.float_(lat)
+            if hemisphere == 'S':
+                lat = -(lat[0] + lat[1] / 60.)
+            elif hemisphere == 'N':
+                lat = lat[0] + lat[1] / 60.
+            else:
+                raise ValueError("Latitude not recognized.")
+        if k==lonline:
+            hemisphere = line[-1]
+            if line.strip(line.strip()[-1]).split()[1][0]=='L':
+            	lon = [line.strip().split()[2].strip(),line.strip().split()[3].strip()]
+            else:
+            	lon = [line.strip().split()[1].strip(),line.strip().split()[2].strip()]
+            lon = np.float_(lon)
+            if hemisphere == 'W':
+                lon = -(lon[0] + lon[1] / 60.)
+            elif hemisphere == 'E':
+                lon = lon[0] + lon[1] / 60.
+            else:
+                raise ValueError("Latitude not recognized.")
+        if line == '*END*':  # Get end of header.
+            skiprows = k + 1
+            break
+    return lon,lat
+  
 
 
 def extsect(radpath,isopicnal=32.15,
