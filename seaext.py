@@ -3,7 +3,7 @@
 #and organize this data to some better format
 #Made by Iury Sousa - São Paulo/Brazil
 
-#Some of these functions was based or inspired by other authors
+#Some of these functions were based or inspired by other authors
 #as Filipe Fernandes and his scripts published on GitHub or his 
 #website https://ocefpaf.github.io/python4oceanographers/
 #I have a lot to thank for his help, manly giving his time to
