@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #These functions there's no general use. I maintain and publish this for some reason that I donno
-#Made by Iury Sousa - São Paulo/Brazil
+#Made by Iury Sousa - Sao Paulo/Brazil
 
 
 def angcalc(x,y):
