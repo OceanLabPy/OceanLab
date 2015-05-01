@@ -43,46 +43,81 @@ import matplotlib.patches
 import matplotlib
 
 
-def dfcontourf(ax,df,levels=None,vmin=None,vmax=None,cmap='jet'):
+
+def dfcontourf(ax,df,levels=None,vmin=None,vmax=None,cmap='jet',ocean_pressure=True):
+        '''
+        This function do filled contour plot using index and columns as axes from
+        DataFrame pandas object.
+        To be useful the df must be with axis values as index and columns.
+        '''
+        #define x as the columns values
 	x = df.columns.values
-	y = df.index.values*-1.
+	#if the index represent pressure in ocean
+	if ocean_pressure:
+          y = df.index.values*-1. # convert it to negative float
+        else:
+          y = df.index.values*1. # convert it to float
 	
+	#create grid with coordinates
 	X,Y = np.meshgrid(x,y)
+	#define Z as the DataFrame values
 	Z = df.values
 
+        #define vmin,vmax,and levels if it hasn't defined already
 	if vmin==None:
 		vmin=np.nanmin(Z)
 	if vmax==None:
 		vmax=np.nanmax(Z)
 	if levels==None:
 		levels=np.arange(vmin,vmax,0.1)
-		
+	
+	#print the extreme of values to colormap
 	print vmax
 	print vmin
 
+        #create the contour with h as a handle or object
 	h = ax.contourf(X,Y,Z,levels,
 		vmin=vmin,vmax=vmax,
 		cmap=cmap)
+        #return the contourf object
 	return h
 	
-def dfcontour(ax,df,levels=None,color='k'):
+def dfcontour(ax,df,levels=None,color='k',ocean_pressure=True):
+        '''
+        This function do filled contour plot using index and columns as axes from
+        DataFrame pandas object.
+        To be useful the df must be with axis values as index and columns.
+        '''
+        #define x as the columns values
 	x = df.columns.values
-	y = df.index.values*-1.
+        #if the index represent pressure in ocean
+        if ocean_pressure:
+          y = df.index.values*-1. # convert it to negative float
+        else:
+          y = df.index.values*1. # convert it to float
 	
-	X,Y = np.meshgrid(x,y)
-	Z = df.values
+        #create grid with coordinates
+        X,Y = np.meshgrid(x,y)
+        #define Z as the DataFrame values
+        Z = df.values
 
-	vmin=np.nanmin(Z)
-	vmax=np.nanmax(Z)
+        #define vmin,vmax,and levels if it hasn't defined already
+        if vmin==None:
+                vmin=np.nanmin(Z)
+        if vmax==None:
+                vmax=np.nanmax(Z)
 	if levels==None:
 		levels=np.arange(vmin,vmax,0.1)
 		
 	print vmax
 	print vmin
 
+        #create the contour with h as a handle or object
 	h = ax.contour(X,Y,Z,levels,
 		colors=color)
+        #create the contour label of values as a float with .1 of precision
 	ax.clabel(h, fontsize=10, fmt='%.1f')
+	#return the object h
 	return h
 	
 	
