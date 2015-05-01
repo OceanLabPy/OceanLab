@@ -46,7 +46,7 @@ import matplotlib
 
 def dfcontourf(ax,df,levels=None,vmin=None,vmax=None,cmap='jet',ocean_pressure=True):
         '''
-        This function do filled contour plot using index and columns as axes from
+        This function does filled contour plot using index and columns as axes from
         DataFrame pandas object.
         To be useful the df must be with axis values as index and columns.
         '''
@@ -84,7 +84,7 @@ def dfcontourf(ax,df,levels=None,vmin=None,vmax=None,cmap='jet',ocean_pressure=T
 	
 def dfcontour(ax,df,levels=None,color='k',ocean_pressure=True):
         '''
-        This function do filled contour plot using index and columns as axes from
+        This function does filled contour plot using index and columns as axes from
         DataFrame pandas object.
         To be useful the df must be with axis values as index and columns.
         '''
