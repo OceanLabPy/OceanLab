@@ -114,7 +114,7 @@ def extrap_all(df,lat=[],lon=[],inverse=True,wgt=0.5):
     nans_cnt = [0]
     #while the df has some nan value
     while True:
-        nans_cnt.append(np.argwhere(pd.isnull(extrap_df)).shape[0])
+        nans_cnt.append(np.argwhere(pd.isnull(extrap_df).values).shape[0])
         if nans_cnt[-1]!=nans_cnt[-2]:
             extrap_df = extrap_gradient(extrap_df,lat,lon,wgt=wgt)
         else:
@@ -127,7 +127,7 @@ def extrap_all(df,lat=[],lon=[],inverse=True,wgt=0.5):
         lon = lon[::-1]
         #while the df has some nan value
         while True:
-            nans_cnt.append(np.argwhere(pd.isnull(extrap_df)).shape[0])
+            nans_cnt.append(np.argwhere(pd.isnull(extrap_df).values).shape[0])
             if nans_cnt[-1]!=nans_cnt[-2]:
                 extrap_df = extrap_gradient(extrap_df,lat,lon,wgt=wgt)
             else:

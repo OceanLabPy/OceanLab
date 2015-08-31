@@ -282,9 +282,6 @@ def mdr_fixed(vsec_data,adcp_data,refprof):
 	return vsec_data
 
 def mdr(vsec,adcp):
-#	vsec,lat,lon,section = extdat(rad,sup=True)
-#	lat_adcp,lon_adcp,adcp = adcpvel(lat,lon,'/home/iury/Copy/TCC/new_contour_one',dya=600)
-
 	adcprange = np.nanmax(np.nanmax(adcp))-np.nanmin(np.nanmin(adcp))
 
 

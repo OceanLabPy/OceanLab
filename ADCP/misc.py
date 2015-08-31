@@ -4,7 +4,14 @@ import scipy.interpolate as scint
 def nans(size):
     return np.zeros(size)*np.nan
     
-
+def argdistnear(x,y,xi,yi):
+    idxs = []
+    for xx,yy in zip(x,y):
+        dists = np.sqrt((xi-xx)**2 + (yi-yy)**2)
+        idxs.append(np.argmin(dists))
+    return np.array(idxs)
+    
+    
 def adcp_binning(ADCP,latadcp,lonadcp,latctd,lonctd):
     '''
     Important to use on geostrophic velocity reference,
