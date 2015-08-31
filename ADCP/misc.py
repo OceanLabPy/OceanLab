@@ -43,5 +43,52 @@ def adcp_equalpress(ADCP,PRESS,kind='linear'):
                             ADCP_pp])
     PP = np.tile(pp,(ADCP.shape[1],1)).T
     return ADCP_pp,PP
+
+#def mdr_fixed(vsec_data,adcp_data,refprof):
+#	reff = adcp_data[refprof,:]-vsec_data[refprof,:]
+#	return vsec_data+reff
+
+def mdr(vsec,adcp,p_ini=100,p_fin=200):
     
+        if p_fin>=adcp.shape[0]:
+            p_fin = adcp.shape[0]-1
+
+
+	#Set pref as an empty list
+	pref = []
+	#reads each column
+	for col in np.arange(0,vsec.shape[1]):
+	        #set RSME as an empty list
+		rsmes = []
+		for lvl in np.arange(p_ini,p_fin):
+			reff = adcp[lvl,:]-vsec[lvl,:]
+			vsecref = vsec+reff
+			rsmes.append(rsme(vsecref[0:adcp.shape[0],col],
+			                     adcp[:,col]))
+		
+		if np.all(np.isnan(rsmes)):
+			pref.append(p_fin+1)
+		else:
+			pref.append(np.nanargmin(rsmes)+p_ini)
+		
+	pref = np.array(pref).astype('int')
+        cols = np.arange(0,adcp.shape[1])        
+        
+	adcpvals = adcp[pref,cols]
+	vsecvals = vsec[pref,cols]
+	adcpvals[pref==p_fin+1] = np.nan
+	vsecvals[pref==p_fin+1] = np.nan
+	
+	ref = adcpvals-vsecvals
+	vmdr = vsec+ref
+	return vmdr,pref	
     
+def rsme(V_calc,V_obs):
+        Vrange = np.nanmax(np.nanmax(V_obs))-np.nanmin(np.nanmin(V_obs))
+        err = (np.sqrt(np.subtract(V_calc,V_obs)**2)/Vrange)*100 
+        return np.nanmean(err)
+        
+        
+        
+        
+        

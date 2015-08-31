@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import seawater as sw
-import matplotlib.pyplot as plt
+import scipy.interpolate as scint
 
 
 def near(dat,val,how_many=1):
@@ -22,7 +22,7 @@ def argdistnear(x,y,xi,yi):
         idxs.append(np.argmin(dists))
     return np.array(idxs)
 
-def isopic_depth(DENS,PRES,isopic):
+def isopic_depth(DENS,PRES,isopic,med=False):
     '''
     This function looks for isopicnal depth from
     density vertical field based on pressure field.
@@ -46,8 +46,11 @@ def isopic_depth(DENS,PRES,isopic):
             f = scint.interp1d(DENS[:,col],PRES[:,col])
             #returns the pressure based on isopicnal
             p_ref.append(f(isopic))
-        #converts to numpy array
-        p_ref = np.array(p_ref)
+        if med:
+            #calculates the medium point
+            p_ref = p_ref[:-1]+np.diff(p_ref)/2
+        #converts to numpy array as rounded index
+        p_ref = np.array(p_ref).round().astype('int')
         return p_ref
 
 def extrap_all(df,lat=[],lon=[],inverse=True,wgt=0.5):
