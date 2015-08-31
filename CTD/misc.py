@@ -4,6 +4,24 @@ import numpy as np
 import seawater as sw
 import matplotlib.pyplot as plt
 
+
+def near(dat,val,how_many=1):
+    dif = np.abs(dat-val)
+    idx = np.argsort(dif)
+    return dat[idx][:how_many]
+
+def argnear(dat,val,how_many=1):
+    dif = np.abs(dat-val)
+    idx = np.argsort(dif)
+    return idx
+    
+def argdistnear(x,y,xi,yi):
+    idxs = []
+    for xx,yy in zip(x,y):
+        dists = np.sqrt((xi-xx)**2 + (yi-yy)**2)
+        idxs.append(np.argmin(dists))
+    return np.array(idxs)
+
 def isopic_depth(DENS,PRES,isopic):
     '''
     This function looks for isopicnal depth from
