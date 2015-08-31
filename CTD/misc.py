@@ -4,6 +4,34 @@ import numpy as np
 import seawater as sw
 import matplotlib.pyplot as plt
 
+def isopic_depth(DENS,PRES,isopic):
+    '''
+    This function looks for isopicnal depth from
+    density vertical field based on pressure field.
+    
+    The method is based on linear interpolation only
+    on vertical dimension.
+    
+    (2D-np.array,2D-np.array,float) -> 1D-np.array
+    '''
+    #checks if isopicnal value is on the range of data
+    if (isopic>np.nanmax(DENS))|(isopic<np.nanmin(DENS)):
+        #raise an error message
+        raise ValueError('Isopicnal is out of range!')
+    else:
+        #defines a empty list
+        p_ref = []
+        #read each column
+        for col in np.arange(DENS.shape[1]):
+            #creates a interpolation function
+            #this is based on density by pressure
+            f = scint.interp1d(DENS[:,col],PRES[:,col])
+            #returns the pressure based on isopicnal
+            p_ref.append(f(isopic))
+        #converts to numpy array
+        p_ref = np.array(p_ref)
+        return p_ref
+
 def extrap_all(df,lat=[],lon=[],inverse=True,wgt=0.5):
     '''
     This function extrapolate a section of some property
@@ -93,7 +121,7 @@ def extrap_gradient(df,lat=[],lon=[],wgt=0.5):
 
 
     #calculate the horizontal gradient between the points
-    gradient = ((np.diff(df))/dxs)*1wgt
+    gradient = ((np.diff(df))/dxs)*wgt
     # *1. is to make sure we 
     #are working with float numbers
     
