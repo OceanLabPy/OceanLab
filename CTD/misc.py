@@ -22,6 +22,18 @@ def argdistnear(x,y,xi,yi):
         idxs.append(np.argmin(dists))
     return np.array(idxs)
 
+def select_rad(pts,lon,lat):
+    args=np.array([])
+    for est in pts:
+        c=[]
+        arg=np.array([0])
+        for i in np.arange(0,lon.size):
+            c.append(sw.dist([lat[i],est[1]],[lon[i],est[0]]))
+        arg=np.argmin(np.array(c).T[0][0])
+        args=np.append(args,arg)
+    return args
+
+
 def isopic_depth(DENS,PRES,isopic,med=False):
     '''
     This function looks for isopicnal depth from
