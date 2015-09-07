@@ -31,23 +31,21 @@ def adcp_binning(ADCP,latadcp,lonadcp,latctd,lonctd):
     
     ADCP_m = []
     for inf,sup in zip(args[:-1],args[1:]):
-        ADCP_m.append(np.mean(ADCP[:,inf:sup],axis=1))
+        ADCP_m.append(np.nanmean(ADCP[:,inf:sup],axis=1))
     ADCP_m = np.vstack(ADCP_m).T
     
     return ADCP_m
 
 
 def adcp_equalpress(ADCP,PRESS,kind='linear'):
-    pp = np.arange(0,PRESS.max()+1)
+    pp = np.arange(0,PRESS.max().round()+1)
     ADCP_pp = []
     for col in np.arange(ADCP.shape[1]):
-         f = scint.interp1d(PRESS[:,col],ADCP[:,col],kind=kind)
-         ADCP_pp.append(f(pp[pp>=PRESS.min()]))
+         f = scint.interp1d(PRESS[:,col],ADCP[:,col],
+                        kind=kind,bounds_error=False)
+         ADCP_pp.append(f(pp))
     ADCP_pp = np.vstack(ADCP_pp).T
     
-    if PRESS.min()>0:
-        ADCP_pp = np.vstack([nans((PRESS.min(),ADCP.shape[1])),
-                            ADCP_pp])
     PP = np.tile(pp,(ADCP.shape[1],1)).T
     return ADCP_pp,PP
 

@@ -17,7 +17,8 @@ def rolling_window(a, window):
     
 #EXTRACTION
 
-def get_lonlatnames(fname,lathint='Latitude =',lonhint='Longitude ='):
+def get_lonlatnames(fname,lathint='Latitude =',lonhint='Longitude =',
+                          lonline=[],latline=[]):
     f = open(fname)
     header, config, names = [], [], []
     for k, line in enumerate(f.readlines()):
@@ -28,8 +29,14 @@ def get_lonlatnames(fname,lathint='Latitude =',lonhint='Longitude ='):
             config.append(line)
         if '# name' in line:
             names.append(line.split('=')[-1].split(':')[0][1:])
-        #if k==latline:
-        if lathint in line:
+        if (lonline==[])|(latline==[]):
+            latcond = lathint in line
+            loncond = lonhint in line
+        else:
+            latcond = k==latline
+            loncond = k==lonline
+
+        if latcond:
             hemisphere = line.split()[-1]
             deg = float(line.split()[-3])
             minute = float(line.split()[-2])
@@ -38,8 +45,8 @@ def get_lonlatnames(fname,lathint='Latitude =',lonhint='Longitude ='):
                 lat *= -1
             else:
                 raise ValueError("Latitude not recognized.")
-        #if k==lonline:
-        if lonhint in line:
+
+        if loncond:
             hemisphere = line.split()[-1]
             deg = float(line.split()[-3])
             minute = float(line.split()[-2])
@@ -100,6 +107,15 @@ def loopedit(cast):
 	
 
 
+def abv_water(cast,maxprof=11000):
+	'''
+	returns down and up cast
+	'''
+	castdig = cast[cast.index.values<11000]
+	castdig = castdig[castdig.index.values>0]
+	down = cast.iloc[:cast.index.argmax()]
+	up = cast.iloc[cast.index.argmax():][::-1]
+	return down,up
 
 
 
@@ -117,8 +133,13 @@ def basename(fname):
     name, ext = os.path.splitext(name)
     return path, name, ext
 
-def ctdread(fname,press_name='prDM',lathint='Latitude =',lonhint='Longitude =',down_cast=True):
-	lon,lat,names,skiprows = get_lonlatnames(fname,lathint=lathint,lonhint=lonhint)
+def ctdread(fname,press_name='prDM',lathint='Latitude =',
+                lonhint='Longitude =',down_cast=True,
+                latline=[],lonline=[]):
+
+	
+	lon,lat,names,skiprows = get_lonlatnames(fname,lathint=lathint,
+	                       lonhint=lonhint,lonline=lonline,latline=latline)
 
 
 	cast = pd.read_csv(fname,skiprows=skiprows,
@@ -144,6 +165,22 @@ def despike(self,propname,block,wgth=2):
 	self = self[np.abs(self[propname]-meant)<stdt]
 	return self
 
+def hann_filter(self,propname,block):
+    '''
+    This function apply Hanning Window filter to some item
+    named 'propname' 
+    
+    '''
+    def hann(x):
+        return (x*np.hanning(x.size)).sum()/np.hanning(x.size).sum()
+        
+    filtered_na = pd.rolling_apply(self[propname],block,hann,center=True)
+    #Fill the head and tail of values that does not got the filter
+    self[propname] = filtered_na.fillna(self[propname])
+    
+    return self
+    
+
 def binning(self,delta=1.):
         start = np.floor(self.index[0])
         end = np.ceil(self.index[-1])
@@ -155,17 +192,19 @@ def binning(self,delta=1.):
 def ctdproc(lista,temp_name='t068C',
         lathint='Latitude =',lonhint='Longitude =',
         cond_name='c0S/m',press_name='prDM',down_cast=True,
-        loopedit=True):
+        looped=True,hann_f=False,hann_block=20,hann_times=2,
+        latline=[],lonline=[]):
     '''
-    Esta função processa dados de ctd no formato .cnv. 
-    Modo de uso:
-        Abra algum arquivo 
+    This function do the basic proccess to all .cnv CTD data from
+    given list.
     '''
     for fname in lista:
         
-   	lon,lat,data = ctdread(fname,press_name=press_name,down_cast=down_cast,lathint=lathint,lonhint=lonhint)
+   	lon,lat,data = ctdread(fname,press_name=press_name,
+   	                down_cast=down_cast,lathint=lathint,
+   	                lonhint=lonhint,lonline=lonline,latline=latline)
    	
-   	if loopedit:
+   	if looped:
            	data = loopedit(data)
            	
    	dataname = basename(fname)[1]
@@ -191,8 +230,16 @@ def ctdproc(lista,temp_name='t068C',
    	data = binning(data,delta=1.)
    	if temp_name=='t068C':
    	    data['t090C'] = gsw.t90_from_t68(data['t068C'])
-   	    
+   	       	    
    	data['sp'] = gsw.SP_from_C(data[cond_name]*10,data['t090C'],data.index.values)
+
+   	if hann_f:
+   	    times=0
+   	    while times<hann_times:
+           	    data = hann_filter(data,'t090C',hann_block)
+           	    data = hann_filter(data,'sp',hann_block)
+           	    times +=1
+
    	data['pt'] = sw.ptmp(data['sp'],data['t090C'],data.index.values)
    	#data['ct'] = gsw.CT_from_pt(data['sa'],data['pt'])
    	data['psigma0'] = sw.pden(data['sp'],data['t090C'],data.index.values,pr=0)-1000
@@ -241,21 +288,50 @@ def return_section(directory,ext='*.cnv'):
 	
 	# return the lat, lon and section
 	return section
-	
-	
+
+#		
+#lista = glob('/home/iury/TRABALHO/MARSEAL01/CTD_hann/*.cnv')
+#
+#ctdproc(lista,temp_name='t090C',looped=True,hann_block=7,hann_times=2,hann_f=True)
+#
+#lista = glob('/home/iury/TRABALHO/MARSEAL01/CTD/*.cnv')
+#
+#ctdproc(lista,temp_name='t090C',looped=True,hann_f=False)
+#
+#
+#lista = glob('/home/iury/TRABALHO/MARSEAL02/CTD_hann/*.cnv')
+#
+#ctdproc(lista,temp_name='t090C',looped=True,hann_block=7,hann_times=2,hann_f=True)
+#
+#lista = glob('/home/iury/TRABALHO/MARSEAL02/CTD/*.cnv')
+#
+#ctdproc(lista,temp_name='t090C',looped=True,hann_f=False)
+
+
+#
+#
+#sec = return_section('/home/iury/TRABALHO/MARSEAL01/CTD/')
+#sec2 = return_section('/home/iury/TRABALHO/MARSEAL01/CTD_hann/')
+#
+#plt.plot(sec.minor_xs('pt'),'b')
+#plt.plot(sec2.minor_xs('pt'),'r')
+
+
+#lon,lat,data = ctdread(fname,press_name='prDM',latline=14,lonline=15)
+
 #path = '/home/iury/Copy/TCC/Rotinas/dados'
 
 #lista = [os.path.join(dirpath, f)
 #    for dirpath, dirnames, files in os.walk(path)
 #    for f in fnmatch.filter(files, '*.cnv')]
-
 #
-#path = '/home/iury/Copy/TCC/dados/OL2/CTD/13S/'
+#
+#path = '/home/iury/TRABALHO/POTIGUAR/CTD/'
 #
 #lista = np.sort(glob(path+'*.cnv'))
-
-
-
-
-
+#
+#ctdproc(lista,latline=14,lonline=15,loopedit=False)
+#
+#
+#sec = return_section('/home/iury/TRABALHO/POTIGUAR/CTD/')
 
