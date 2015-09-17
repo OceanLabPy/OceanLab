@@ -37,8 +37,8 @@ def adcp_binning(ADCP,latadcp,lonadcp,latctd,lonctd):
     return ADCP_m
 
 
-def adcp_equalpress(ADCP,PRESS,kind='linear'):
-    pp = np.arange(0,PRESS.max().round()+1)
+def adcp_equalpress(ADCP,PRESS,step=1,kind='linear'):
+    pp = np.arange(0,PRESS.max().round()+step,step)
     ADCP_pp = []
     for col in np.arange(ADCP.shape[1]):
          f = scint.interp1d(PRESS[:,col],ADCP[:,col],
