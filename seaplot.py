@@ -287,7 +287,7 @@ def streams(ax,fig,xx,yy,u,v,vmax=1.5,left=0.8):
 def make_map(llcrnrlon=-51, urcrnrlon=-30.2, llcrnrlat=-15,
 		urcrnrlat=7.1,projection='merc', resolution='i',
 		figsize=(6, 6), inset=True,axe = None,steplat=2,
-		steplon=2,inloc=1):
+		steplon=2,inloc=1,continentcolor='0.85'):
     
     '''
     This function creates a basemap map easily with option
@@ -316,7 +316,7 @@ def make_map(llcrnrlon=-51, urcrnrlon=-30.2, llcrnrlat=-15,
 
     m.drawstates(zorder=22)
     m.drawcoastlines(zorder=21)
-    m.fillcontinents(color='0.85',zorder=20)
+    m.fillcontinents(color=continentcolor,zorder=20)
     meridians = np.arange(np.floor(llcrnrlon), 
 		np.ceil(urcrnrlon) + 2, steplon)
     parallels = np.arange(np.floor(llcrnrlat), 

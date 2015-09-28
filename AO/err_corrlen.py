@@ -441,18 +441,38 @@ def adjusting(cdat,dist,binn,cut=550):
 
 #BOUNDARY CONDITION
 
-def bathy_lims(PROF,lnu=-33,lnd=-49,ltu = -20,ltd = -34,step=1,just_bathy=False):
+def bathy_lims(PROF,lnu=-33,lnd=-49,
+                ltu=-20,ltd=-34,step=1,
+                etopo=5,just_bathy=False):
+    
+    arq = 'etopo%.i.nc'%(etopo)
     #LENDO DADOS DO ETOPO
-    url = 'http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/etopo5.nc'
+    url = 'http://ferret.pmel.noaa.gov/thredds/dodsC/data/PMEL/'+arq
     etopodata = Dataset(url)
     
-    blon = (360-etopodata.variables['ETOPO05_X'][:])*-1
-    blat = etopodata.variables['ETOPO05_Y'][:]
+    if etopo==1:
+        strx = 'x'
+        stry = 'y'
+        strb = 'rose'
+        blon = (etopodata.variables[strx][:])
+        blat = etopodata.variables[stry][:]
+    elif etopo==5:
+        strx = 'ETOPO05_X'
+        stry = 'ETOPO05_Y'
+        strb = 'ROSE'
+        #FIXME
+        #This only works for ocidental hemisphere
+        blon = (360-etopodata.variables[strx][:])*-1
+        blat = etopodata.variables[stry][:]
+    else:
+        raise ValueError('Selected etopo not configured yet')
+        
+
     
     condy = (blat>ltd)&(blat<ltu)
     condx = (blon>lnd)&(blon<lnu)
     
-    topoin = etopodata.variables['ROSE'][condy,:][:,condx]
+    topoin = etopodata.variables[strb][condy,:][:,condx]
     
     bLON,bLAT = np.meshgrid(blon[condx],blat[condy])
     

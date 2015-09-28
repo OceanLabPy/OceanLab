@@ -14,9 +14,10 @@ def savesection(path,ext):
         Matlab.update({prop:section.minor_xs(prop).values})
     Matlab.update({'PRESS':section.major_axis.values})
     sio.savemat(path+'sections/'+ext,Matlab)
-    
+
+
 #LENDO TUDO
-path = '/home/iury/Copy/Dados/SEAL/MARSEAL01/CTD/'
+path = '/home/iury/Copy/Dados/OL2/CTD_hann/'
 section = return_section(path,'*.cnv')
 #salvando pickle
 section.to_pickle(path+'all/alldata')
@@ -31,7 +32,6 @@ sio.savemat(path+'all/alldata',Matlab)
 
 
 #LENDO TUDO
-path = '/home/iury/Copy/Dados/SEAL/MARSEAL01/CTD/'
 lista = glob(path+'*.cnv')
 
 rads = []
