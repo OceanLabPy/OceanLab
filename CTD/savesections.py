@@ -17,7 +17,7 @@ def savesection(path,ext):
 
 
 #LENDO TUDO
-path = '/home/iury/Copy/Dados/OL2/CTD_hann/'
+path = '/data0/iury_data/Copy/Dados/ONE1/CTD_hann/'
 section = return_section(path,'*.cnv')
 #salvando pickle
 section.to_pickle(path+'all/alldata')
