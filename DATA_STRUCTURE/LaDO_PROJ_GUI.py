@@ -12,6 +12,8 @@ import os
 from glob import glob
 import tkFileDialog as filedialog
 from Tkinter import *
+import time as tm
+import getpass
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -119,38 +121,123 @@ def GUI():
     
     return path_out,option
 
-path,v = GUI()
 
+# Defines the path of the folder project and the properties that will be added
+path,v = GUI()
+tm=tm.localtime()
+d,m,y,h,mn,s=tm.tm_mday,tm.tm_mon,tm.tm_year,tm.tm_hour,tm.tm_min,tm.tm_sec
+user,machine=getpass.getuser(),os.uname()[1]
+
+# Tests if the user input the / at the end of the directory
+if path[-1]=='/':
+    path = path[:-1]
+    
+# Changes the path in order to make sure that all the folders are in uppercase    
+path=os.path.dirname(path)+'/'+path.split('/')[-1].upper()
+
+#Creates the .pdf folder with the tree system
 seeme1 = os.path.join(script_dir,'SEEME.cmap')
 seeme2 = os.path.join(script_dir,'SEEME.pdf')
 
+
 try:
+    # checks if the folder already exists. if the project folder already exists the fuction only updates.
     os.chdir(path)
     print 'Project Directory Updated!'
+    os.system()
 except:
+    # if not creates a new project folder
     print 'Project Directory Created!'
     os.system('mkdir '+path)
     os.system('mkdir '+os.path.join(path,'PLAN'))
     os.system('mkdir '+os.path.join(path,'PROJECT_REPORT'))
-    
+    #Creatig the README.txt file
+    f=open(os.path.join(path,'README.txt'),'w')
+    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    text='''
+
+Created in %s/%s/%s at %s:%s:%s by: %s@%s
+
+This is a folder-tree system created and used by Ocean Dynamic Laboratory from the Oceanographic Institute - University of São Paulo.
+The scheme of the tree system used to create the folders is in the SEEME.pdf file.
+
+In this folder system there are all the data and processing routines used in the %s project.
+
+'''%(d,m,y,h,mn,s,user,machine,path.split('/')[-1].upper(),)
+    f.write(text)
+    f2.write(text)
+    f.close()
+    f2.close()
     os.system('cp '+seeme1+' '+path)
     os.system('cp '+seeme2+' '+path)  
 
+date_i='10/2015' ##### TODO
+date_f='11/2015' ##### TODO
 
 if v==1:
     name,datanames = CRUISE_GUI()
     
     os.system('mkdir '+os.path.join(path,name))
+    f=open(os.path.join(path,'README.txt'),'a')
+    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    text='''
+
+Edited in %s/%s/%s at %s:%s:%s by: %s@%s
+
+In this project there was a cruise from %s to %s named %s. 
+The parameter collected in the cruise were:'''%(d,m,y,h,mn,s,user,machine,date_i,date_f,name)
+    f.write(text)
+    f2.write(text)
+    for prop in datanames:
+        txt='''
+        -%s'''%(prop)
+        f.write(txt)
+        f2.write(txt)
+    f.close()
+    f2.close()
     fig_dirs(os.path.join(path,name))
     print name
     for datname in datanames:
         print datname
         dataproc_dirs(datname,os.path.join(path,name))
 elif v==2:
-     dataprocfigrep_dirs('GLIDER',path,reportout=False)
+    f=open(os.path.join(path,'README.txt'),'a')
+    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    text='''
+
+Edited in %s/%s/%s at %s:%s:%s by: %s@%s
+
+In this project it was done a glider sampling from %s to %s. '''%(d,m,y,h,mn,s,user,machine,date_i,date_f)
+    f.write(text)
+    f2.write(text)
+    f.close()
+    f2.close()
+    dataprocfigrep_dirs('GLIDER',path,reportout=False)
 elif v==3:
-     os.system('mkdir '+os.path.join(path,'MODELLING'))
-     dataprocfigrep_dirs('OUTPUT',os.path.join(path,'MODELLING'),raw_proc=False)
+    os.system('mkdir '+os.path.join(path,'MODELLING'))
+    f=open(os.path.join(path,'README.txt'),'a')
+    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    text='''
+
+Edited in %s/%s/%s at %s:%s:%s by: %s@%s
+    
+In this project it was done a modelling experiment with output data from %s to %s. '''%(d,m,y,h,mn,s,user,machine,date_i,date_f)
+    f.write(text)
+    f2.write(text)
+    f.close()
+    f2.close()
+    dataprocfigrep_dirs('OUTPUT',os.path.join(path,'MODELLING'),raw_proc=False)
 elif v==4:
-     dataprocfigrep_dirs('MOORING',path,reportout=False)
+    f=open(os.path.join(path,'README.txt'),'a')
+    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    text='''
+
+Edited in %s/%s/%s at %s:%s:%s by: %s@%s
+    
+In this project it was done a mooring sampling from %s to %s. '''%(d,m,y,h,mn,s,user,machine,date_i,date_f)
+    f.write(text)
+    f2.write(text)
+    f.close()
+    f2.close()
+    dataprocfigrep_dirs('MOORING',path,reportout=False)
 
