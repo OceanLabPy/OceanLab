@@ -97,33 +97,45 @@ def CRUISE_GUI():
 def GUI():    
     root = Tk()
     root.wm_title('PROJECT')
-    root.wm_geometry(newGeometry='600x110+500+500')
+    root.wm_geometry(newGeometry='1100x150+500+500')
     
-    Label(root, text="Path to Project Directory").grid(sticky='w',row=0)
-    path = Entry(root,width=20)
-    path.grid(row=1,column=0,sticky='w')
+    Label(root, text="New Project?").grid(sticky='w',row=0)
+    Label(root, text="Add /NAMEOFPROJECT in the end").grid(sticky='w',row=1)
+    Label(root, text="Path to Project Directory").grid(sticky='w',row=2)
+    
+    
+    path = Entry(root,width=30)
+    path.insert(END,os.getcwd())
+    path.grid(row=3,column=0,sticky='w')
     
     options = ["CRUISE","GLIDER","MODELLING","MOORING"]
         
     v = IntVar()
     v.set(1)
-    cnt = 1
+    cnt = 4
     for txt in options:
         button_str = "Radiobutton(root,text=txt,command=v.set(cnt),variable=v,value=cnt)"
         exec('button = '+button_str)
         button.grid(row=2,column=cnt)
         cnt+=1
-    
+ 
+    Label(root, text="Period (MONTH/YEAR)").grid(sticky='w',row=16)
+    date_i = Entry(root,width=20)
+    date_i.grid(row=17,column=0,sticky='w')
+    Label(root, text="to").grid(row=17,column=1)
+    date_f = Entry(root,width=20)
+    date_f.grid(row=17,column=2,sticky='w')
+              
     Button(root, text='XINHO', command=root.quit).grid(row=18, sticky=W, pady=4)
     mainloop( )
-    path_out,option = path.get(),v.get()
+    date_i,date_f,path_out,option = date_i.get(),date_f.get(),path.get(),v.get()
     root.destroy()
     
-    return path_out,option
+    return date_i,date_f,path_out,option
 
 
 # Defines the path of the folder project and the properties that will be added
-path,v = GUI()
+date_i,date_f,path,v = GUI()
 tm=tm.localtime()
 d,m,y,h,mn,s=tm.tm_mday,tm.tm_mon,tm.tm_year,tm.tm_hour,tm.tm_min,tm.tm_sec
 user,machine=getpass.getuser(),os.uname()[1]
@@ -170,8 +182,8 @@ In this folder system there are all the data and processing routines used in the
     os.system('cp '+seeme1+' '+path)
     os.system('cp '+seeme2+' '+path)  
 
-date_i='10/2015' ##### TODO
-date_f='11/2015' ##### TODO
+#date_i='10/2015' ##### TODO
+#date_f='11/2015' ##### TODO
 
 if v==1:
     name,datanames = CRUISE_GUI()
