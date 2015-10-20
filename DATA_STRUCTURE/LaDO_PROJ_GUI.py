@@ -144,7 +144,6 @@ try:
     # checks if the folder already exists. if the project folder already exists the fuction only updates.
     os.chdir(path)
     print 'Project Directory Updated!'
-    os.system()
 except:
     # if not creates a new project folder
     print 'Project Directory Created!'
@@ -153,21 +152,21 @@ except:
     os.system('mkdir '+os.path.join(path,'PROJECT_REPORT'))
     #Creatig the README.txt file
     f=open(os.path.join(path,'README.txt'),'w')
-    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    safe=open(os.path.join(path,'.README_s.txt'),'w')
     text='''
 
 Created in %s/%s/%s at %s:%s:%s by: %s@%s
 
-This is a folder-tree system created and used by Ocean Dynamic Laboratory from the Oceanographic Institute - University of São Paulo.
+This is a folder-tree pattern created and used by Ocean Dynamic Laboratory from the Oceanographic Institute - University of São Paulo.
 The scheme of the tree system used to create the folders is in the SEEME.pdf file.
 
 In this folder system there are all the data and processing routines used in the %s project.
 
 '''%(d,m,y,h,mn,s,user,machine,path.split('/')[-1].upper(),)
     f.write(text)
-    f2.write(text)
+    safe.write(text)
     f.close()
-    f2.close()
+    safe.close()
     os.system('cp '+seeme1+' '+path)
     os.system('cp '+seeme2+' '+path)  
 
@@ -176,10 +175,9 @@ date_f='11/2015' ##### TODO
 
 if v==1:
     name,datanames = CRUISE_GUI()
-    
     os.system('mkdir '+os.path.join(path,name))
     f=open(os.path.join(path,'README.txt'),'a')
-    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    safe=open(os.path.join(path,'.README_s.txt'),'a')
     text='''
 
 Edited in %s/%s/%s at %s:%s:%s by: %s@%s
@@ -187,14 +185,14 @@ Edited in %s/%s/%s at %s:%s:%s by: %s@%s
 In this project there was a cruise from %s to %s named %s. 
 The parameter collected in the cruise were:'''%(d,m,y,h,mn,s,user,machine,date_i,date_f,name)
     f.write(text)
-    f2.write(text)
+    safe.write(text)
     for prop in datanames:
         txt='''
         -%s'''%(prop)
         f.write(txt)
-        f2.write(txt)
+        safe.write(txt)
     f.close()
-    f2.close()
+    safe.close()
     fig_dirs(os.path.join(path,name))
     print name
     for datname in datanames:
@@ -202,42 +200,42 @@ The parameter collected in the cruise were:'''%(d,m,y,h,mn,s,user,machine,date_i
         dataproc_dirs(datname,os.path.join(path,name))
 elif v==2:
     f=open(os.path.join(path,'README.txt'),'a')
-    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    safe=open(os.path.join(path,'.README_s.txt'),'a')
     text='''
 
 Edited in %s/%s/%s at %s:%s:%s by: %s@%s
 
 In this project it was done a glider sampling from %s to %s. '''%(d,m,y,h,mn,s,user,machine,date_i,date_f)
     f.write(text)
-    f2.write(text)
+    safe.write(text)
     f.close()
-    f2.close()
+    safe.close()
     dataprocfigrep_dirs('GLIDER',path,reportout=False)
 elif v==3:
     os.system('mkdir '+os.path.join(path,'MODELLING'))
     f=open(os.path.join(path,'README.txt'),'a')
-    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    safe=open(os.path.join(path,'.README_s.txt'),'a')
     text='''
 
 Edited in %s/%s/%s at %s:%s:%s by: %s@%s
     
 In this project it was done a modelling experiment with output data from %s to %s. '''%(d,m,y,h,mn,s,user,machine,date_i,date_f)
     f.write(text)
-    f2.write(text)
+    safe.write(text)
     f.close()
-    f2.close()
+    safe.close()
     dataprocfigrep_dirs('OUTPUT',os.path.join(path,'MODELLING'),raw_proc=False)
 elif v==4:
     f=open(os.path.join(path,'README.txt'),'a')
-    f2=open(os.path.join(path,'.README_s.txt'),'w')
+    safe=open(os.path.join(path,'.README_s.txt'),'a')
     text='''
 
 Edited in %s/%s/%s at %s:%s:%s by: %s@%s
     
 In this project it was done a mooring sampling from %s to %s. '''%(d,m,y,h,mn,s,user,machine,date_i,date_f)
     f.write(text)
-    f2.write(text)
+    safe.write(text)
     f.close()
-    f2.close()
+    safe.close()
     dataprocfigrep_dirs('MOORING',path,reportout=False)
 
