@@ -1,0 +1,8 @@
+pandas
+numpy
+scipy
+matplotlib
+basemap
+gsw
+seawater
+netCDF4

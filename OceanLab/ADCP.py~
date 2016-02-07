@@ -6,6 +6,7 @@ import scipy.interpolate as scint
 
 def rsme(V_calc,V_obs):
         '''
+        aa
         This function calculates the mean squared error.
         '''
         Vrange = np.nanmax(np.nanmax(V_obs))-np.nanmin(np.nanmin(V_obs))
