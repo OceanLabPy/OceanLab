@@ -112,6 +112,7 @@ def GUI():
         
     v = IntVar()
     v.set(1)
+    
     cnt = 4
     for txt in options:
         button_str = "Radiobutton(root,text=txt,command=v.set(cnt),variable=v,value=cnt)"
@@ -128,8 +129,9 @@ def GUI():
               
     Button(root, text='XINHO', command=root.quit).grid(row=18, sticky=W, pady=4)
     mainloop( )
-    date_i,date_f,path_out,option = date_i.get(),date_f.get(),path.get(),v.get()
+    date_i,date_f,path_out,option = date_i.get(),date_f.get(),path.get(),v.get()-3
     root.destroy()
+    
     
     return date_i,date_f,path_out,option
 
@@ -181,9 +183,6 @@ In this folder system there are all the data and processing routines used in the
     safe.close()
     os.system('cp '+seeme1+' '+path)
     os.system('cp '+seeme2+' '+path)  
-
-#date_i='10/2015' ##### TODO
-#date_f='11/2015' ##### TODO
 
 if v==1:
     name,datanames = CRUISE_GUI()

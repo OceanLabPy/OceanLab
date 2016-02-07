@@ -19,33 +19,27 @@ You can find it on the Example directory.
 INSTALLATION:
 I'm updating the package yet.
 
-I will change it to get better but you have to clone the ocean directory and add to PYTHONPATH
-the path to the directory that have it:
+Clone this directory and run:
 
-For example:
-If ocean directory is in home folder (Linux). You can do it editing bashrc:
-
-	oce=/home
-	PYTHONPATH=$oce:$PYTHONPATH
-	export PYTHONPATH
+python setup.py install
 	
 Sorry for the lack of comments on some functions but I'm working on it and this is unstable yet.
-Until now, the less commented script is the seaplot.py
+Until now, the less commented script is the SEAPLOT.py
 
 USAGE:
 
-Some of directories has functions to import as: ADCP,AO,CTD,MOORING and SEAPLOT.
+Some of directories has functions to import as: ADCP,AO,CTD,EOF_fillgap,MOORING and SEAPLOT.
 
 You can import as:
 
-from ocean.AO import *
+from ocean import AO
 
-ans use like:
+and use as:
 
 AO.psi2uv()
 
-WARNING: Be careful with the use of this. It can have errors.
 
+WARNING: Be careful with the use of this. It can have errors.
 Sao Paulo - SP, march 2015
 
 

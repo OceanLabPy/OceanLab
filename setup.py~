@@ -1,0 +1,32 @@
+from distutils.core import setup
+from distutils import util
+
+def readme():
+    with open('README.md') as f:
+        return f.read()
+
+if __name__=='__main__':
+    pathADCP = util.convert_path('ocean/ADCP')
+    pathCTD = util.convert_path('ocean/CTD')
+    pathAO = util.convert_path('ocean/AO')
+    pathMOORING = util.convert_path('ocean/MOORING')
+    pathSEAPLOTimport  = util.convert_path('ocean/SEAPLOT')
+    setup(name='ocean',
+             version='0.1',
+             description='Python functions for Physical Oceanograhy',
+             long_description=readme(),
+             url='https://github.com/iuryt/ocean',
+             author='Iury Sousa',
+             author_email='simoesiury@gmail.com',
+             license='MIT',
+             package_dir={'ocean':'ocean',
+                          'ocean.ADCP':pathADCP,
+                          'ocean.CTD':pathCTD,
+                          'ocean.AO':pathAO,
+                          'ocean.MOORING':pathMOORING,
+                          'ocean.SEAPLOT':pathSEAPLOT},
+             packages=['ocean','ocean.ADCP','ocean.AO','ocean.CTD',
+                            'ocean.MOORING','ocean.SEAPLOT'],
+             install_requires=['pandas','numpy','scipy','matplotlib','basemap',
+                               'gsw','seawater','netCDF4'],
+             zip_safe=False)

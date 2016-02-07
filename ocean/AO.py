@@ -182,12 +182,12 @@ def psi2uv(x,y,psi):
     
     #% Components u and v on Cartesian Coordinates
 
-    #v = v2-v1
-    #u = u2-u1
+    v = v2-v1
+    u = u2-u1
     
     #on original the final was
-    v = v1+v2
-    u = u1+u2
+    #v = v1+v2
+    #u = u1+u2
 
     return u,v
 
