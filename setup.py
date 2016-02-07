@@ -8,7 +8,7 @@ def readme():
 
 if __name__=='__main__':
     setup(name='ocean',
-             version='0.1',
+             version='0.2',
              description='Python functions for Physical Oceanograhy',
              long_description=readme(),
              url='https://github.com/iuryt/ocean',
