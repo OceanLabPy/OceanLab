@@ -17,6 +17,7 @@ if __name__=='__main__':
              author='Iury Tércio Simões de Sousa',
              author_email='simoesiury@gmail.com',
              license='MIT',
+             packages=['OceanLab'],
              py_modules=['ADCP','AO','CTD','EOF_fillgap','MOORING','SEAPLOT'],
              install_requires=['pandas','numpy','scipy','matplotlib',
                                'gsw','seawater','netCDF4'])
