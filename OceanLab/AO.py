@@ -5,43 +5,45 @@ import numpy as np
 import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 
+from OceanLab import *
+
 def psi2uv(x,y,psi):
     '''
-    % PSI2UV Velocity components from streamfunction
-    %   [U,V] = PSI2UV(X,Y,PSI) returns the velocity components U and V
-    %   from streamfunction PSI. X and Y are longitude and latitude matrices,
-    %   respectively, as PSI. All matrices have same dimension.
-    % 
-    %   --> !!! IMPORTANT !!!  <-----------------------------------------
-    %   The grid indexes IM and JM must have origin on the left-inferior 
-    %   corner, increasing to right and to up, respectively.
-    % 
-    %                              GRID
-    %            :            :            :            :
-    %            |            |            |            |
-    %   (JM = 2) o ---------- o ---------- o ---------- o --- ...
-    %            |            |            |            |
-    %            |            |            |            |
-    %   (JM = 1) o ---------- o ---------- o ---------- o --- ...
-    %            |            |            |            |
-    %            |            |            |            |
-    %   (JM = 0) o ---------- o ---------- o ---------- o --- ...
-    %        (IM = 0)     (IM = 1)     (IM = 2)     (IM = 3)
-    % 
-    %   -----------------------------------------------------------------
-    % 
-    %   USAGE:  u,v = psi2uv(x,y,psi)
-    % 
-    %   INPUT:
-    %     x     = decimal degrees (+ve E, -ve W) [-180..+180]
-    %     y     = decimal degrees (+ve N, -ve S) [- 90.. +90]
-    %     psi   = streamfunction [m^2 s^-1]
-    % 
-    %   OUTPUT:
-    %     u   = velocity zonal component [m s^-1]
-    %     v   = velocity meridional component [m s^-1]
-    % 
-    %   EXAMPLE:
+     PSI2UV Velocity components from streamfunction
+       Returns the velocity components U and V
+       from streamfunction PSI. X and Y are longitude and latitude matrices,
+       respectively, as PSI. All matrices have same dimension.
+     
+       --> !!! IMPORTANT !!!  <-----------------------------------------
+       The grid indexes IM and JM must have origin on the left-inferior 
+       corner, increasing to right and to up, respectively.
+     
+                                  GRID
+                :            :            :            :
+                |            |            |            |
+       (JM = 2) o ---------- o ---------- o ---------- o --- ...
+                |            |            |            |
+                |            |            |            |
+       (JM = 1) o ---------- o ---------- o ---------- o --- ...
+                |            |            |            |
+                |            |            |            |
+       (JM = 0) o ---------- o ---------- o ---------- o --- ...
+            (IM = 0)     (IM = 1)     (IM = 2)     (IM = 3)
+     
+       -----------------------------------------------------------------
+     
+      USAGE:  u,v = psi2uv(x,y,psi)
+     
+      INPUT:
+         x     = decimal degrees (+ve E, -ve W) [-180..+180]
+         y     = decimal degrees (+ve N, -ve S) [- 90.. +90]
+         psi   = streamfunction [m^2 s^-1]
+     
+      OUTPUT:
+         u   = velocity zonal component [m s^-1]
+         v   = velocity meridional component [m s^-1]
+     
+      EXAMPLE:
       import numpy as np
       import matplotlib.pyplot as plt
       x,y = np.meshgrid(np.arange(-30,-20,0.5),np.arange(-35,-25,0.5))
@@ -52,144 +54,65 @@ def psi2uv(x,y,psi):
       u,v = psi2uv(x,y,psi)
       plt.contourf(x,y,psi,30,cmap='Spectral_r')
       plt.quiver(x,y,u,v,color='w')
+      plt.axis('equal')
 
-    %   Author:
-    %   Rafael A. de Mattos (RAM), 03 May 2005
-    %   Update of 03 May 2005 (RAM)
-       Translated to PYTHON by Iury Sousa, 29 July 2015
-
-    %   ======================================================================
+      AUTHOR:
+       Wandrey Watanabe e Iury Sousa    - 12 May 2016
+       Laboratório de Dinâmica Oceânica - IOUSP
+       ======================================================================
     '''
 
-    JM,IM = psi.shape
-
-    u = np.zeros((JM,IM))
-    v = u
+    #função para cálculo de ângulos
+    angcalc = lambda dy,dx: np.math.atan2(dy,dx) 
     
-    u2,v2 = u.copy()*np.nan,v.copy()*np.nan
-    u1,v1 = u.copy()*np.nan,v.copy()*np.nan
+    #funções para os diferenciais com borda
+    dX      = lambda d: np.hstack([(d[:,1]-d[:,0])[:,None],
+                        d[:,2:]-d[:,:-2],(d[:,-1]-d[:,-2])[:,None]])
+    dY      = lambda d: np.vstack([(d[1,:]-d[0,:])[None,:],
+                        d[2:,:]-d[:-2,:],(d[-1,:]-d[-2,:])[None,:]])
 
-    #% Velocity components u2 and v2 on Natural Coordinates
-
-    for i in np.arange(0,IM):
-     for j in np.arange(0,JM):
+    # x = coordenada natural i
+    # y = coordenada natural j
+    # X = coordenada zonal cartesiana
+    # Y = coordenada meridional cartesiana
     
-        #% Take for behind difference
-        if j == 0:
-            dy2 = (y[j+1,i]-y[j,i])*60*1852
-            dx2 = (x[j+1,i]-x[j,i])*60*1852
-            dd = np.sqrt(dx2**2+dy2**2)
-            V = (psi[j,i]-psi[j+1,i])/dd
-        if np.isinf(dy2/dx2):
-            ang = 0
-        elif (np.math.atan(dy2/dx2)*180/np.pi > 0) & (~np.isinf(dy2/dx2)):
-            ang = np.math.atan(dy2/dx2)*180/np.pi - 90
-        else:
-            ang = np.math.atan(dy2/dx2)*180/np.pi + 90
+    dyX = dX(y)*60*1852*np.cos(y*np.pi/180)
+    dyY = dY(y)*60*1852
 
-        v2[j,i] = V*np.sin(ang*np.pi/180)
-        u2[j,i] = V*np.cos(ang*np.pi/180)
+    dxX = dX(x)*60*1852*np.cos(y*np.pi/180)
+    dxY = dY(x)*60*1852
 
-        
-        
-        #% Take forward differences
-        if j == JM-1:
-            dy2 = (y[j,i]-y[j-1,i])*60*1852
-            dx2 = (x[j,i]-x[j-1,i])*60*1852
-            dd = np.sqrt(dx2**2+dy2**2)
-            V = (psi[j-1,i]-psi[j,i])/dd
-        if np.isinf(dy2/dx2):
-            ang = 0
-        elif (np.math.atan(dy2/dx2)*180/np.pi > 0) & (~np.isinf(dy2/dx2)):
-            ang = np.math.atan(dy2/dx2)*180/np.pi - 90
-        else:
-            ang = np.math.atan(dy2/dx2)*180/np.pi + 90
+    dsX = np.sqrt(dxX**2 + dyX**2)
+    dsY = np.sqrt(dxY**2 + dyY**2)
 
-        v2[j,i] = V*np.sin(ang*np.pi/180)
-        u2[j,i] = V*np.cos(ang*np.pi/180)
+    dpx = dX(psi)
+    dpy = dY(psi)
 
-        
-        #% Take centered differences on interior points
-        if (j > 0) & (j < JM-1):
-            dy2 = (y[j+1,i]-y[j-1,i])*60*1852
-            dx2 = (x[j+1,i]-x[j-1,i])*60*1852
-            dd = np.sqrt(dx2**2+dy2**2)
-            V = (psi[j-1,i]-psi[j+1,i])/dd
-        if np.isinf(dy2/dx2):
-            ang = 0
-        elif (np.math.atan(dy2/dx2)*180/np.pi > 0) & (~np.isinf(dy2/dx2)):
-            ang = np.math.atan(dy2/dx2)*180/np.pi - 90
-        else:
-            ang = np.math.atan(dy2/dx2)*180/np.pi + 90
-        v2[j,i] = V*np.sin(ang*np.pi/180)
-        u2[j,i] = V*np.cos(ang*np.pi/180)
+    #a função map aplicará a função lambda angcalc em todos os elementos
+    #indicados depois da virgula e armazenará em uma lista
+    angX = map(angcalc,dyX.ravel(),dxX.ravel())
+    angY = map(angcalc,dyY.ravel(),dxY.ravel())
+    #fazendo rechape dos ângulos para o formato das matrizes de distâncias
+    angX = np.reshape(angX,dsX.shape)
+    angY = np.reshape(angY,dsY.shape)
 
+    #calculando as componentes u e v das velocidades calculadas em JM e IM
+    v1,u1 =  (dpy/dsY)*np.cos(angY), -(dpy/dsY)*np.sin(angY)
+    u2,v2 = -(dpx/dsX)*np.sin(angX),  (dpx/dsX)*np.cos(angX)
 
-    #% Velocity components u1 and v1 on Natural Coordinates
+    # zerando valores aos quais a derivada tendeu ao infinito:
+    # isto só acontece se uma das dimensões da grade for paralalela a um
+    # eixo cartesiano 
+    v1[np.isinf(v1)] = 0
+    v2[np.isinf(v2)] = 0
+    u1[np.isinf(u1)] = 0
+    u2[np.isinf(u2)] = 0
 
-    for j in np.arange(0,JM):
-     for i in np.arange(0,IM):
+    #somando as componentes
+    U = u1+u2
+    V = v1+v2
 
-        #% Take for behind difference
-        if i == 0:
-            dy2 = (y[j,i+1]-y[j,i])*60*1852
-            dx2 = (x[j,i+1]-x[j,i])*60*1852
-            dd = np.sqrt(dx2**2+dy2**2)
-            V = (psi[j,i]-psi[j,i+1])/dd
-        if np.isinf(dy2/dx2):
-            ang = 0
-        elif (np.math.atan(dy2/dx2)*180/np.pi > 0) & (~np.isinf(dy2/dx2)):
-            ang = np.math.atan(dy2/dx2)*180/np.pi - 90
-        else:
-            ang = np.math.atan(dy2/dx2)*180/np.pi + 90
-
-        v1[j,i] = V*np.sin(ang*np.pi/180)
-        u1[j,i] = V*np.cos(ang*np.pi/180)
-
-        
-        
-        #% Take forward differences
-        if i == IM-1:
-            dy2 = (y[j,i]-y[j,i-1])*60*1852
-            dx2 = (x[j,i]-x[j,i-1])*60*1852
-            dd = np.sqrt(dx2**2+dy2**2)
-            V = (psi[j,i-1]-psi[j,i])/dd
-        if np.isinf(dy2/dx2):
-            ang = 0
-        elif (np.math.atan(dy2/dx2)*180/np.pi > 0) & (~np.isinf(dy2/dx2)):
-            ang = np.math.atan(dy2/dx2)*180/np.pi - 90
-        else:
-            ang = np.math.atan(dy2/dx2)*180/np.pi + 90
-
-        v1[j,i] = V*np.sin(ang*np.pi/180)
-        u1[j,i] = V*np.cos(ang*np.pi/180)
-
-        
-        #% Take centered differences on interior points
-        if (i > 0) & (i < IM-1):
-            dy2 = (y[j,i+1]-y[j,i-1])*60*1852
-            dx2 = (x[j,i+1]-x[j,i-1])*60*1852
-            dd = np.sqrt(dx2**2+dy2**2)
-            V = (psi[j,i-1]-psi[j,i+1])/dd
-        if np.isinf(dy2/dx2):
-            ang = 0
-        elif (np.math.atan(dy2/dx2)*180/np.pi > 0) & (~np.isinf(dy2/dx2)):
-            ang = np.math.atan(dy2/dx2)*180/np.pi - 90
-        else:
-            ang = np.math.atan(dy2/dx2)*180/np.pi + 90
-        v1[j,i] = V*np.sin(ang*np.pi/180)
-        u1[j,i] = V*np.cos(ang*np.pi/180)
-    
-    #% Components u and v on Cartesian Coordinates
-
-    v = v2-v1
-    u = u2-u1
-    
-    #on original the final was
-    #v = v1+v2
-    #u = u1+u2
-
-    return u,v
+    return U,V
 
 def vectoa(xc,yc,x,y,u,v,corrlenx,corrleny,err,b):
         '''
