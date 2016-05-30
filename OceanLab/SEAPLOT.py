@@ -297,8 +297,6 @@ def make_map(llcrnrlon=-51, urcrnrlon=-30.2, llcrnrlat=-15,
     changes
     '''
 
-
-
     if axe==None:
             fig, ax = plt.subplots(figsize=figsize)
 	    m = Basemap(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
@@ -310,9 +308,6 @@ def make_map(llcrnrlon=-51, urcrnrlon=-30.2, llcrnrlat=-15,
                 projection=projection, resolution=resolution,ax=axe)
 	    ax = axe
             print('Map Created!')
-
-
-
 
     m.drawstates(zorder=22)
     m.drawcoastlines(zorder=21)
