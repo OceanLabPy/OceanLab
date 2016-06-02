@@ -10,7 +10,7 @@ import scipy.interpolate as scint
 
 #DYNAMICAL MODES
 
-def my_eqmodes(N2,z,nm,pmodes=False):
+def eqmodes(N2,z,nm,pmodes=False):
     '''
     This function computes the equatorial velocity modes
     
@@ -45,14 +45,15 @@ def my_eqmodes(N2,z,nm,pmodes=False):
                 
             Returned only if input pmodes=True
     
-    made by Hélio Almeida @USP-2016
-        and Iury Sousa    @USP-2016
+    made by Hélio Almeida, Iury Sousa and Wandrey Watanabe
+    Laboratório de Dinâmica Oceânica - Universidade de São Paulo
+                                2016
     '''
 
     #needed to the problem
     lat = 0
-
-    nm -= 1
+    #nm will be the number of baroclinic modes
+    nm -= 1 #Barotropic mode will be added
 
     #defines the orthonormalization function
     onorm      = lambda f: f/np.sqrt(dz*((np.array(f[1:])**2+\
@@ -73,15 +74,13 @@ def my_eqmodes(N2,z,nm,pmodes=False):
          np.diag(np.ones(z.size-3)*1.,1)  
     A  = A/(dz**2)
 
-    # linear operator C  = -(1/N2)*A
     A  = np.matrix(A)
     N2 = np.matrix(N2)
     
+    #C  = A*N2
     N02 = -1/N2
     N02[np.isinf(N02)]=0
-
     C  = N02*A
-    
     
     # solve the eigenvalue problem
     egval,egvec = np.linalg.eig(C)
@@ -117,14 +116,11 @@ def my_eqmodes(N2,z,nm,pmodes=False):
     #converting to km
     radii*=1e-3
     
-    print ei
-    print c
-    print beta
     
     #BAROTROPIC MODE
     no = 1
     fb = np.ones((Si.shape[0],1))*no
-    sb = np.expand_dims(np.linspace(0,no,Si.shape[0]), axis=1)
+    sb = np.expand_dims(np.linspace(0,no+1,Si.shape[0]), axis=1)
     
     # trying to compute the pmodes based on the polarization
     # relation between velocity/pressure modes
