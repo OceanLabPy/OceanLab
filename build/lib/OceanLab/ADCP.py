@@ -8,10 +8,9 @@ def rsme(V_calc,V_obs):
         '''
         This function calculates the mean squared error.
         '''
-        n      = V_calc.size 
         Vrange = np.nanmax(np.nanmax(V_obs))-np.nanmin(np.nanmin(V_obs))
-        err    = (np.sqrt(np.sum(np.subtract(V_calc,V_obs)**2)/n)/Vrange)*100 
-        return err
+        err = (np.sqrt(np.subtract(V_calc,V_obs)**2)/Vrange)*100 
+        return np.nanmean(err)
 
 def nans(size):
     '''
