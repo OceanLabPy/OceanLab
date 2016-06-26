@@ -1,3 +1,3 @@
 
-__version__ = '0.1'
-__all__ = ['ADCP','CTD','AO','EOF_fillgap','MOORING','SEAPLOT']
+__version__ = '1.0'
+__all__ = ['ADCP','CTD','AO','EOF','SEAPLOT','utils']

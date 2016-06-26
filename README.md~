@@ -1,5 +1,5 @@
-# ocean
-Package of Python scripts for Oceanography - Version 0.2
+# OceanLab
+Package of Python scripts for Oceanography - Version 0.1
 
 This lib was made by Iury Sousa (simoesiury@gmail.com) from Brazil to help him and other people that
 needs to organize, process and plot CTD and VADCP data from cruise. Manly directioned
@@ -30,7 +30,7 @@ Some of directories has functions to import as: ADCP,AO,CTD,EOF_fillgap,MOORING 
 
 You can import as:
 
-from ocean import AO
+from OceanLab import AO
 
 and use as:
 

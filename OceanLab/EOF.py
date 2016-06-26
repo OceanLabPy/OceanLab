@@ -1,3 +1,50 @@
+import numpy as np
+
+    
+def eoft(trmat,nm=None):
+    '''
+    evals_perc,evecs_norm,amp = eoft(trmat)
+    
+    Computes eof in time (or depth) for general cases
+    normally trmat is a matrix containing each time series 
+    (or vertical profiles) as a row. 
+    That is, for N stations having m data points, 
+    trmat is a N by m matrix.
+    '''
+    
+    #if is masked the data
+    try:
+        Trmat = trmat.data
+        Trmat[trmat.mask] = np.nan
+        trmat = Trmat.copy()
+    except:
+        None
+        
+    #% demeans trmat prior to doing eof
+    trmat = (trmat.T-np.nanmean(trmat,axis=1)).T
+    #% computes zero-lag cross-covariance matrix
+    mcov = np.dot(trmat,trmat.T)/(trmat.shape[1]-1)
+    #% computes eigenvalues and eigenvectors
+    evals,evecs = np.linalg.eig(mcov)
+    #find the descending order of eigenvalues
+    ind = np.argsort(evals)[::-1]
+    #% normalize eigenvectors
+    evecs_norm = evecs[:,ind]/np.linalg.norm(evecs[:,ind],axis=0)
+    #% sort eigenvalues and computes percent variance explained by each mode
+    evals_perc = evals[ind]/np.sum(evals)
+    #% computes amplitude functions 
+    amp = np.dot(evecs_norm.T,trmat)
+    
+    #if was chosen a number of eigenvectors
+    if nm!=None:
+        evecs_norm = evecs_norm[:,:nm]
+        evals_perc = evals_perc[:nm]
+        amp        = amp[:nm,:]
+    
+    return evals_perc,evecs_norm,amp
+    
+    
+    
 def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
     #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% vi = my_eof_interp(M,nmodes)
     #%   This function try to fill gappy data using its EOFs

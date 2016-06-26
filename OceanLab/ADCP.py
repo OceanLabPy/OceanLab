@@ -1,39 +1,7 @@
 import numpy as np
-import scipy.interpolate as scint
 
+from utils import *
 
-############################################################################### 
-
-def rsme(V_calc,V_obs):
-        '''
-        This function calculates the mean squared error.
-        '''
-        n      = V_calc.size 
-        Vrange = np.nanmax(np.nanmax(V_obs))-np.nanmin(np.nanmin(V_obs))
-        err    = (np.sqrt(np.sum(np.subtract(V_calc,V_obs)**2)/n)/Vrange)*100 
-        return err
-
-def nans(size):
-    '''
-    Create an array full of NaNs with some given shape.
-    '''
-    return np.zeros(size)*np.nan
-    
-def argdistnear(x,y,xi,yi):
-    '''
-    This function finds the index to nearest points in (xi,yi) from (x,y).
-     
-    '''
-    idxs = []
-    for xx,yy in zip(x,y):
-        dists = np.sqrt((xi-xx)**2 + (yi-yy)**2)
-        idxs.append(np.argmin(dists))
-    return np.array(idxs)
-    
-############################################################################### 
-###############################################################################
-
-    
 def adcp_binning(ADCP,latadcp,lonadcp,latctd,lonctd):
     '''
     Important to use on geostrophic velocity reference,
@@ -59,26 +27,6 @@ def adcp_binning(ADCP,latadcp,lonadcp,latctd,lonctd):
     return ADCP_m
 
 
-def adcp_equalpress(ADCP,PRESS,step=1,kind='linear'):
-    '''
-    This function interpolates a given observed data and its depth to
-    Equally spaced pressure data.
-    
-    Usage:
-        adcp_equalpress(2D-array,2D-array,integer,string) --> 2D-array,2D-array
-    
-    '''
-    pp = np.arange(0,PRESS.max().round()+step,step)
-    ADCP_pp = []
-    for col in np.arange(ADCP.shape[1]):
-         f = scint.interp1d(PRESS[:,col],ADCP[:,col],
-                        kind=kind,bounds_error=False)
-         ADCP_pp.append(f(pp))
-    ADCP_pp = np.vstack(ADCP_pp).T
-    
-    PP = np.tile(pp,(ADCP.shape[1],1)).T
-    return ADCP_pp,PP
-
 def mdr(geostrophic,observation,p_ini=100,p_fin=200):
         '''
         This function calibrate the normal geostrophic velocity
@@ -97,6 +45,7 @@ def mdr(geostrophic,observation,p_ini=100,p_fin=200):
             rmse()
             
         '''
+        
         p_ini = int(p_ini)
         p_fin = int(p_fin)
         
@@ -139,8 +88,4 @@ def mdr(geostrophic,observation,p_ini=100,p_fin=200):
 	
 	return vmdr,pref	
     
-############################################################################### 
-        
-        
-        
-        
+ 
