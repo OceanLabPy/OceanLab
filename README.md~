@@ -26,7 +26,7 @@ Until now, the less commented script is the SEAPLOT.py
 
 USAGE:
 
-Some of directories has functions to import as: ADCP,AO,CTD,EOF_fillgap,MOORING and SEAPLOT.
+Some of directories has functions to import as: ADCP,AO,CTD,EOF,SEAPLOT and utils.
 
 You can import as:
 
