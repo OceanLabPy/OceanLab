@@ -1,154 +1,10 @@
-import scipy.interpolate as scint
+# -*- coding: utf-8 -*-
+import pandas as pd
 import numpy as np
-from netCDF4 import Dataset
-
-def interp2_yaxis(X,Y,Z,yi,kind='linear'):
-    '''
-    This function interpolates a given data by second axis (Y-axis).
-    
-    Usage:
-        interp2_axis1(2D-array,2D-array,2D-array,1D-array,string)
-                                --> 2D-array,2D-array,2D-array
-    
-    '''
-    #FUNCTION TO VERIFY IF (A/DE)SCENDENT OF Y AND YI IS CONSISTENT
-    dif  = lambda dt: np.diff(dt[[0,-1]])[0]
-    order = lambda dt: (dif(dt)/np.abs(dif(dt))).astype('int')
-    #INTERPOLATION LAMBDA FUNCTION
-    kw = {'kind':kind,'bounds_error':False}
-    interp = lambda col: scint.interp1d(Y[:,col],Z[:,col],**kw)(yi)
-    
-    #INTERPOLATION
-    Zi = np.vstack([interp(col) for col in np.arange(Z.shape[1])]).T    
-    #NEW GRID DATA
-    Yi = np.array([yi,]*Zi.shape[1]).T
-    Xi = np.array([X[0,:],]*yi.size)
-    
-    #CHANGING THE ORDER
-    if order(yi)!=order(Y[:,0]):
-        Zi = np.flipud(Zi); Yi = np.flipud(Yi)
-
-    return Xi,Yi,Zi
-    
-            
-def rsme(V_calc,V_obs):
-    '''
-    This function calculates the mean squared error.
-    '''
-    drange = lambda d: np.nanmax(d.ravel())-np.nanmin(d.ravel())
-    
-    n      = V_calc.size
-    Vrange = drange(V_obs)
-    
-    err    = (np.sqrt(np.sum(np.subtract(V_calc,V_obs)**2)/n)/Vrange)*100 
-    return err
-    
-
-def nans(size):
-    '''
-    Create an array full of NaNs with some given shape.
-    '''
-    return np.zeros(size)*np.nan
-    
-    
-def argdistnear(x,y,xi,yi):
-    '''
-    This function finds the index to nearest points in (xi,yi) from (x,y).
-     
-    '''
-    idxs = [np.argmin(np.sqrt((xi-xx)**2 + (yi-yy)**2)) for xx,yy in zip(x,y)]
-    idxs = np.array(idxs)
-    return idxs
-    
-    
-def download_bathy(lnd=-49,lnu=-33,ltd=-34,ltu=-20):
-    '''
-    This function downloads ETOPO1 data and make subset.
-    
-    lnd: lowest  longitude limit
-    ltd:   "     latitude    "    
-    
-    lnu: highest longitude limit
-    ltu:    "    latitude    "
-    '''
-    #DECLARE URL PATH TO DOWNLOAD DATA
-    arq = 'ETOPO1_Bed_g_gmt4.nc'
-    url = 'http://www.ngdc.noaa.gov/thredds/dodsC/relief/ETOPO1/thredds/'+arq
-    
-    #READIND DATA
-    etopodata = Dataset(url)
-    
-    #READING COORDINATES
-    blon = (etopodata.variables['lon'][:])
-    blat = etopodata.variables['lat'][:]
-
-    #MAKING SUBSET
-    condy = (blat>ltd)&(blat<ltu)
-    condx = (blon>lnd)&(blon<lnu)
-    topoin = etopodata.variables['z'][condy,:][:,condx]
-    
-    #MAKING GRID
-    bLON,bLAT = np.meshgrid(blon[condx],blat[condy])
-    
-    return bLON,bLAT,topoin
-
- 
-#BOUNDARY CONDITION
-
-def bathy_lims(PROF,lnu=-33,lnd=-49,
-                ltu=-20,ltd=-34,step=1):
-    
-    bLON,bLAT,topoin = download_bathy(lnu=lnu,lnd=lnd,ltu=ltu,ltd=ltd)
-    
-    #PLOTTING
-    plt.ioff()
-    plt.figure()
-    C = plt.contour(bLON,bLAT,-topoin,levels=[-PROF],colors='k')
-    plt.close()
-    
-    #EXTRACTING COORDINATES
-    C = np.vstack(C.allsegs[0])
-    pseudo_lat = C[:,1]
-    pseudo_lon = C[:,0]
-    pseudo_dat = np.zeros(pseudo_lat.shape)
-    
-    return pseudo_lon[::step],pseudo_lat[::step],pseudo_dat[::step]
+import seawater as sw
+import scipy.interpolate as scint
 
 
-def deflagg(cast,flag=-9.990000e-29):
-	'''
-	pandas dataframe  -->  pandas dataframe
-	Remove badflags data from pandas dataframe.
-
-	flag default is -9.99e-29
-
-	Example:
-	deflagg(cast,flag=999)
-	'''
-
-	castdeflag = cast[cast.flag != flag]
-	return castdeflag
-	
-def basename(fname):
-    """Return filename without path.
-
-    Examples
-    --------
-    >>> fname = '../test/data/FSI.txt.zip'
-    >>> basename(fname)
-    ('../test/data', 'FSI.txt', '.zip')
-    """
-    path, name = os.path.split(fname)
-    name, ext = os.path.splitext(name)
-    return path, name, ext	
-
-def rolling_window(a, window):
-    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
-    strides = a.strides + (a.strides[-1],)
-    return np.lib.stride_tricks.as_strided(a, shape=shape, strides=strides)  
-    
-     
-      
 def near(dat,val,how_many=1):
     dif = np.abs(dat-val)
     idx = np.argsort(dif)
@@ -159,6 +15,12 @@ def argnear(dat,val,how_many=1):
     idx = np.argsort(dif)
     return idx
     
+def argdistnear(x,y,xi,yi):
+    idxs = []
+    for xx,yy in zip(x,y):
+        dists = np.sqrt((xi-xx)**2 + (yi-yy)**2)
+        idxs.append(np.argmin(dists))
+    return np.array(idxs)
 
 def select_rad(pts,lon,lat):
     args=np.array([])
@@ -171,10 +33,38 @@ def select_rad(pts,lon,lat):
         args=np.append(args,arg)
     return args
 
-###############################################################################
-# EXTRAPOLATION
-###############################################################################    
-            
+
+def isopic_depth(DENS,PRES,isopic,med=False):
+    '''
+    This function looks for isopicnal depth from
+    density vertical field based on pressure field.
+    
+    The method is based on linear interpolation only
+    on vertical dimension.
+    
+    (2D-np.array,2D-np.array,float) -> 1D-np.array
+    '''
+    #checks if isopicnal value is on the range of data
+    if (isopic>np.nanmax(DENS))|(isopic<np.nanmin(DENS)):
+        #raise an error message
+        raise ValueError('Isopicnal is out of range!')
+    else:
+        #defines a empty list
+        p_ref = []
+        #read each column
+        for col in np.arange(DENS.shape[1]):
+            #creates a interpolation function
+            #this is based on density by pressure
+            f = scint.interp1d(DENS[:,col],PRES[:,col])
+            #returns the pressure based on isopicnal
+            p_ref.append(f(isopic))
+        if med:
+            #calculates the medium point
+            p_ref = p_ref[:-1]+np.diff(p_ref)/2
+        #converts to numpy array as rounded index
+        p_ref = np.array(p_ref).round().astype('int')
+        return p_ref
+
 def extrap_all(df,lat=[],lon=[],inverse=True,wgt=0.5):
     '''
     This function extrapolate a section of some property
@@ -288,3 +178,51 @@ def extrap_gradient(df,lat=[],lon=[],wgt=0.5):
     return extrap_df
 
 
+
+
+#
+#sec = pd.read_pickle(u'/home/iury/TRABALHO/MARSEAL02/CTD/sections/SEAL02rad1')
+#lat = sec.minor_xs('lat').mean().values
+#lon = sec.minor_xs('lon').mean().values
+#
+#dist = np.hstack((0,np.cumsum(sw.dist(lat,lon)[0])))
+#prof = sec.major_axis.values
+#
+#X,Z = np.meshgrid(dist,prof)
+#
+#gpan = extrap_all(sec.minor_xs('gpan'),lat=lat,lon=lon,inverse=True)
+#
+#gvel = sw.gvel(gpan,lat,lon)
+#gvel_r = gvel-gvel[1100,:]
+#
+#X = X[:,:-1] + np.diff(X,axis=1)/2
+#Z = Z[:,:-1]
+#
+#plt.ion()
+#
+#fig,(ax1,ax2) = plt.subplots(2,1)
+#ax1.contourf(X,Z,gvel,np.arange(-2,2.1,0.1),cmap='seismic')
+#ax1.set_ylim([0,1000])
+#ax1.invert_yaxis()
+#
+#ax2.contourf(X,Z,gvel_r,levels=np.arange(-1,1.1,0.1),
+#                cmap='seismic')
+#ax2.set_ylim([0,1000])
+#ax2.invert_yaxis()
+
+
+
+#
+#import pandas as pd
+#import numpy as np
+#df1 = pd.DataFrame(np.array([[1,1,1],[np.nan,3,2],[2,3,np.nan]]))
+#df2 = extrap_all(df1.copy())
+#
+#X,Y =  np.meshgrid(df1.columns.values*1.,df1.index.values*1.)
+#
+#plt.figure()
+#plt.contourf(X,Y,df1)
+#plt.title('Not Extrapolated Data')
+#plt.figure()
+#plt.contourf(X,Y,df2)
+#plt.title('Extrapolated Data')	

@@ -132,7 +132,7 @@ def zeta(x,y,U,V):
     angX = np.reshape(angX,dsx.shape)
     angY = np.reshape(angY,dsy.shape)
     
-    #calculando as componentes u e v das velocidades calculadas em JM e IM
+    #calculando as componentes X e Y das derivadas
     dv1,dv2 =  (dVy/dsy)*np.cos(angY),  (dVx/dsx)*np.cos(angX)
     du1,du2 = -(dUy/dsy)*np.sin(angY), -(dUx/dsx)*np.sin(angX)
     
