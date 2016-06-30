@@ -20,4 +20,4 @@ if __name__=='__main__':
              packages=['OceanLab'],
              py_modules=['ADCP','AO','CTD','EOF_fillgap','MOORING','SEAPLOT'],
              install_requires=['pandas','numpy','scipy','matplotlib',
-                               'gsw','seawater','netCDF4'])
+                               'gsw','seawater'])
