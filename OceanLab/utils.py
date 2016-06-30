@@ -157,7 +157,7 @@ def near(dat,val,how_many=1):
 def argnear(dat,val,how_many=1):
     dif = np.abs(dat-val)
     idx = np.argsort(dif)
-    return idx
+    return idx[:how_many]
     
 
 def select_rad(pts,lon,lat):
