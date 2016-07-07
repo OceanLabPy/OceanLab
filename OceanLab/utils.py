@@ -1,7 +1,37 @@
 import scipy.interpolate as scint
 import numpy as np
 from netCDF4 import Dataset
+import matplotlib.pyplot as plt
+import pandas as pd
+import seawater as sw
+import os
+import pickle
 
+#SAVING AND LOADING DATA IN PYTHON
+def save_pickle(obj, name):
+    '''
+    Save python object as pickle binary.
+    '''
+    if name[-4:]=='.pkl':
+        path = name
+    else:
+        path = name+'.pkl'
+        
+    with open(path, 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_pickle(name):
+    '''
+    Load python object as pickle binary.
+    '''
+    if name[-4:]=='.pkl':
+        path = name
+    else:
+        path = name+'.pkl'
+    with open(path, 'rb') as f:
+        return pickle.load(f)
+        
+        
 def interp2_yaxis(X,Y,Z,yi,kind='linear'):
     '''
     This function interpolates a given data by second axis (Y-axis).

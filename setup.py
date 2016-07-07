@@ -9,7 +9,7 @@ def readme():
 
 if __name__=='__main__':
     setup(name='OceanLab',
-             version='0.1',
+             version='1.0',
              description='Python functions for Physical Oceanograhy',
              long_description=readme(),
              package_dir={'OceanLab':'OceanLab'},
@@ -18,6 +18,6 @@ if __name__=='__main__':
              author_email='simoesiury@gmail.com',
              license='MIT',
              packages=['OceanLab'],
-             py_modules=['ADCP','AO','CTD','EOF','utils','SEAPLOT'],
+             py_modules=['utils','ADCP','AO','CTD','EOF','DYN','SEAPLOT'],
              install_requires=['pandas','numpy','scipy','matplotlib',
                                'gsw','seawater'])

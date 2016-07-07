@@ -3,6 +3,18 @@ import numpy as np
 import seawater as sw
 
 
+def dyn_amp(A,vi):
+    '''
+    This function makes the projection of every dynamical mode to velocity
+    timeseries or section matrix to obtain its amplitude. It will be used to
+    data reconstruction.
+    
+    Operation: ((A'*A)^-1)*(A'*vi)
+    
+    '''
+    return np.dot(np.linalg.inv(np.dot(A.T,A)),np.dot(A.T,vi))
+    
+
 def zeta(x,y,U,V):
     '''
      ZETA k-component of rotational by velocity field
