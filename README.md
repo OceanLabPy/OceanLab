@@ -49,7 +49,7 @@ python -c "from OceanLab import *"
   - *adcp_binning()*: Binning ADCP data between CTD stations;
   - *mdr()*: Calibrate the normal geostrophic velocity section from observed normal velocity data;
 - **AO**
-  - *vectoa()*: Objective analysis for vectorial fields;
+  - *vectoa()*: Objective analysis for vectorial fields (Adaption on Filipe Fernandes function);
   - *scaloa()*: Objective analysis for scalar fields;
   - *Functions to calculate the correlation length*;
 - **CTD**
