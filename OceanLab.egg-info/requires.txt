@@ -1,0 +1,6 @@
+pandas
+numpy
+scipy
+matplotlib
+gsw
+seawater

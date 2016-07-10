@@ -36,6 +36,9 @@ and use as:
 
 AO.psi2uv()
 
+WEBSITE:
+This OceanLab project is not only a Python package, but a programming teaching tool. Visit the website for tutorials and mode information: http://iuryt.github.io 
+
 
 WARNING: Be careful with the use of this. It can have errors.
 Sao Paulo - SP, february 2016
