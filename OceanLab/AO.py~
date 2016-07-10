@@ -56,7 +56,6 @@ def vectoa(xc,yc,x,y,u,v,corrlenx,corrleny,err,b=0):
       xc = xc * (corrlen*1./corrlenx)
       x  = x *  (corrlen*1./corrlenx)
 
-      n  = len(x)
       ###########################################################################
       # DATA POINTS
       ###########################################################################

@@ -37,6 +37,12 @@ Clone this directory and run:
 
 python setup.py install
 
+## Tests
+
+Run the code below and it cannot return error:
+
+python -c "from OceanLab import *"
+
 ## Documentation
 
 - **ADCP**
@@ -74,11 +80,6 @@ python setup.py install
   - *select_rad()*: Finds the index to select the section from 2 *matplotlib.pyplot.ginput()* points;
   - *extrap_all()*: Extrapolation function based on data's X gradient;
 
-## Tests
-
-Run the code below and it cannot return error:
-
-python -c "from OceanLab import *"
 
 ## Contributors
 

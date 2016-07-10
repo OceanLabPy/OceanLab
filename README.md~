@@ -29,7 +29,7 @@ TODO
 There's still a lack of packages and tutorials for Python uses on oceanography. So, the OceanLab
 project is based not just provide a package, but to create a teaching tool for oceanographers though.
 The website with Python instalation and tutorials is still only available on **Portuguese**, but I'm 
-working on english version. See the website on this link: [OceanLab][1]. Help me to 
+working on english version. See the website on this link: [OceanLab][1]. Help me with problems to make new tutorials. 
 
 ## Installation
 
