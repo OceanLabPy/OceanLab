@@ -22,7 +22,7 @@ Now this package have this subpackages below:
 
 ## Code Example
 
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+TODO
 
 ## Motivation
 
@@ -76,7 +76,9 @@ python setup.py install
 
 ## Tests
 
-Describe and show how to run the tests with code examples.
+Run the code below and it cannot return error:
+
+python -c "from OceanLab import *"
 
 ## Contributors
 
@@ -84,7 +86,7 @@ Everyone can contribute to this code. Some of functions was based on Filipe Fern
 
 ## License
 
-A short snippet describing the license (MIT, Apache, etc.)
+MIT license.
 
 ##WARNING 
 Be careful with the use of this. It can have errors.
@@ -94,54 +96,4 @@ Sao Paulo - SP, february 2016
 
 
 [1]:http://iuryt.github.io
-
-
-
-
-Package of Python scripts for Oceanography - Version 1.0
-
-This lib was made by Iury Sousa (simoesiury@gmail.com) from Brazil to help him and other people that
-needs to organize, process and plot CTD and VADCP data from cruise. Mainly directioned
-to mesoscale oceanographers. The scripts need to have installed some packages:
-		  
-		  Matplotlib
-		  Basemap
-		  Numpy
-		  Scipy
-		  Pandas
-		  Gibbs SeaWater
-		  SeaWater
-		  
-SUBPACKAGES:
-
-
-		  
-INSTALLATION:
-I'm updating the package yet.
-
-Clone this directory and run:
-
-python setup.py install
-	
-Sorry for the lack of comments on some functions but I'm working on it and this is unstable yet.
-Until now, the less commented script is the SEAPLOT.py
-
-USAGE:
-
-Some of directories has functions to import as: ADCP,AO,CTD,EOF,SEAPLOT and utils.
-
-You can import as:
-
-from OceanLab import AO
-
-and use as:
-
-AO.psi2uv()
-
-
-
-
-WARNING: Be careful with the use of this. It can have errors.
-Sao Paulo - SP, february 2016
-
 
