@@ -2,7 +2,7 @@
 Package of Python scripts for Oceanography - Version 1.0
 
 This lib was made by Iury Sousa (simoesiury@gmail.com) from Brazil to help him and other people that
-needs to organize, process and plot CTD and VADCP data from cruise. Manly directioned
+needs to organize, process and plot CTD and VADCP data from cruise. Mainly directioned
 to mesoscale oceanographers. The scripts need to have installed some packages:
 		  
 		  Matplotlib

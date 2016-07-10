@@ -1,5 +1,5 @@
 # OceanLab
-Package of Python scripts for Oceanography - Version 0.1
+Package of Python scripts for Oceanography - Version 1.0
 
 This lib was made by Iury Sousa (simoesiury@gmail.com) from Brazil to help him and other people that
 needs to organize, process and plot CTD and VADCP data from cruise. Manly directioned
@@ -35,6 +35,9 @@ from OceanLab import AO
 and use as:
 
 AO.psi2uv()
+
+WEBSITE:
+This OceanLab project is not only a Python package, but a programming teaching tool. Visit the website for tutorials and mode information: http://iuryt.github.io 
 
 
 WARNING: Be careful with the use of this. It can have errors.
