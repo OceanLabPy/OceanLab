@@ -172,15 +172,15 @@ def scaloa(xc, yc, x, y, t=None, corrlenx=None,corrleny=None, err=None, zc=None)
       A = (1 - err) * np.exp(-d2 / corrlen ** 2)
       C = (1 - err) * np.exp(-dc2 / corrlen ** 2)
       if 0: # NOTE: If the parameter zc is used (`scaloa2.m`)
-      A = (1 - d2 / zc ** 2) * np.exp(-d2 / corrlen ** 2)
-      C = (1 - dc2 / zc ** 2) * np.exp(-dc2 / corrlen ** 2)
-      # Add the diagonal matrix associated with the sampling error. We use the
-      # diagonal because the error is assumed to be random. This means it just
-      # correlates with itself at the same place.
-      A = A + err * np.eye(len(A))
-      # Gauss-Markov to get the weights that minimize the variance (OI).
-      tp = None
-      ep = 1 - np.sum(C.T * np.linalg.solve(A, C.T), axis=0) / (1 - err)
+          A = (1 - d2 / zc ** 2) * np.exp(-d2 / corrlen ** 2)
+          C = (1 - dc2 / zc ** 2) * np.exp(-dc2 / corrlen ** 2)
+          # Add the diagonal matrix associated with the sampling error. We use the
+          # diagonal because the error is assumed to be random. This means it just
+          # correlates with itself at the same place.
+          A = A + err * np.eye(len(A))
+          # Gauss-Markov to get the weights that minimize the variance (OI).
+          tp = None
+          ep = 1 - np.sum(C.T * np.linalg.solve(A, C.T), axis=0) / (1 - err)
       if t!=None:
           t = np.reshape(t, (n, 1))
           tp = np.dot(C, np.linalg.solve(A, t))
