@@ -18,6 +18,6 @@ if __name__=='__main__':
              author_email='simoesiury@gmail.com',
              license='MIT',
              packages=['OceanLab'],
-             py_modules=['utils','ADCP','AO','CTD','EOF','DYN','SEAPLOT'],
+             py_modules=['utils','ADCP','AO','CTD','EOF','DYN','SEAPLOT'])
 #             install_requires=['pandas','numpy','scipy','matplotlib',
 #                               'gsw','seawater'])
