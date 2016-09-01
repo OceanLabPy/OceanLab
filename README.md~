@@ -14,7 +14,7 @@ Now this package have this subpackages below:
 - **ADCP**
 - **AO**
 - **CTD**
-- **DYN**
+- **DYN** 
 - **EOF**
 - **SEAPLOT**
 - **utils**
@@ -28,8 +28,8 @@ TODO
 
 There's still a lack of packages and tutorials for Python uses on oceanography. So, the OceanLab
 project is based not just provide a package, but to create a teaching tool for oceanographers though.
-The website with Python instalation and tutorials is still only available on **Portuguese**, but I'm
-working on english version. See the website on this link: [OceanLab][1]. Help me with problems to make new tutorials.
+The website with Python instalation and tutorials is still only available on **Portuguese**, but I'm 
+working on english version. See the website on this link: [OceanLab][1]. Help me with problems to make new tutorials. 
 
 ## Installation
 
@@ -59,7 +59,7 @@ python -c "from OceanLab import *"
   - *dyn_amp()*: Makes the projection of every dynamical mode to velocity to obtain its amplitude;
   - *zeta()*: Calculates the vorticity field by velocity field;
   - *psi2uv()*: Calculates the velocity field by stream function scalar field;
-  - *eqmodes()*: Calculates the equatorial dynamical pressure and vertical velocity modes;
+  - *eqmodes()*: Calculates the equatorial dynamical pressure and vertical velocity modes; 
 - **EOF**
   - *eoft()*: Calculates the Empirical Orthogonal Functions;
   - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated by Cesar Rocha Matlab version);
@@ -79,7 +79,7 @@ python -c "from OceanLab import *"
   - *argnear()*: Finds the index for nearest value from list;
   - *select_rad()*: Finds the index to select the section from 2 *matplotlib.pyplot.ginput()* points;
   - *extrap_all()*: Extrapolation function based on data's X gradient;
-  - *dt_serie*: Usefull **Class** for a uneven spaced *datetime* list;
+
 
 ## Contributors
 
@@ -89,7 +89,7 @@ Everyone can contribute to this code. Some of functions was based on Filipe Fern
 
 MIT license.
 
-##WARNING
+##WARNING 
 Be careful with the use of this. It can have errors.
 
 
@@ -97,3 +97,4 @@ Sao Paulo - SP, february 2016
 
 
 [1]:http://iuryt.github.io
+

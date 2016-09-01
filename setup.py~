@@ -19,5 +19,5 @@ if __name__=='__main__':
              license='MIT',
              packages=['OceanLab'],
              py_modules=['utils','ADCP','AO','CTD','EOF','DYN','SEAPLOT'],
-#             install_requires=['pandas','numpy','scipy','matplotlib',
-#                               'gsw','seawater'])
+             install_requires=['pandas','numpy','scipy','matplotlib',
+                               'gsw','seawater'])

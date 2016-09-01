@@ -8,8 +8,6 @@ import os
 import pickle
 from datetime import datetime
 
-
-
 class dt_serie:
        '''
        Input data is a list of datetime objects.
