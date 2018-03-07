@@ -9,7 +9,7 @@ def readme():
 
 if __name__=='__main__':
     setup(name='OceanLab',
-             version='1.0',
+             version='1.1',
              description='Python functions for Physical Oceanograhy',
              long_description=readme(),
              package_dir={'OceanLab':'OceanLab'},

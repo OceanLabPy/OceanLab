@@ -7,6 +7,35 @@ import seawater as sw
 import os
 import pickle
 from datetime import datetime
+import requests
+import shutil
+
+
+# lonmin=-55.,lonmax=-22.,latmin=-36.,latmax=-4.6
+
+
+def ETOPOget(lonmin,lonmax,latmin,latmax):
+    url = "https://maps.ngdc.noaa.gov/mapviewer-support/wcs-proxy/wcs.groovy"+\
+          "?filename=etopo1_bedrock.nc&request=getcoverage&version=1.0.0&"+\
+          "service=wcs&coverage=etopo1_bedrock&CRS=EPSG:4326&format=netcdf&"+\
+          "resx=0.016666666666666667&resy=0.016666666666666667&"+\
+          "bbox={lonmin},{latmin},{lonmax},{latmax}"
+
+
+    info = dict(lonmin=lonmin,lonmax=lonmax,latmin=latmin,latmax=latmax)
+
+    r = requests.get(url.format(**info), stream=True)
+    if r.status_code == 200:
+        with open('tmp.nc', 'wb') as f:
+            r.raw.decode_content = True
+            shutil.copyfileobj(r.raw, f)
+        data = Dataset('tmp.nc')
+        os.remove('tmp.nc')
+
+    else:
+        data = 'Internal Error'
+
+    return data
 
 
 
@@ -270,7 +299,7 @@ def extrap_all(df,lat=[],lon=[],inverse=True,wgt=0.5):
 
     '''
     #if the df is not a pandas.DataFrame
-    if type(df) <> pd.core.frame.DataFrame:
+    if type(df) != pd.core.frame.DataFrame:
         #raise an Error
         raise ValueError('Data is not in the correct format (pandas.DataFrame)')
 
