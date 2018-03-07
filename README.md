@@ -1,6 +1,6 @@
 # OceanLab
 
-Package of Python scripts for Oceanography - Version 1.0
+Package of Python scripts for Oceanography - Version 2.0  (Python 3.6)
 
 ## Synopsis
 
@@ -93,7 +93,7 @@ MIT license.
 Be careful with the use of this. It can have errors.
 
 
-Sao Paulo - SP, february 2016
+Sao Paulo - SP, february 2017
 
 
 [1]:http://iuryt.github.io
