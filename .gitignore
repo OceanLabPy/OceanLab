@@ -3,3 +3,10 @@
 *~
 build/
 dist/
+
+OceanLab/__pycache__/*
+
+Notebooks/**/__pycache__/
+
+# Jupyter Notebook
+.ipynb_checkpoints
