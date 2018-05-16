@@ -9,13 +9,13 @@ def readme():
 
 if __name__=='__main__':
     setup(name='OceanLab',
-             version='1.1',
+             version='1.2',
              description='Python functions for Physical Oceanograhy',
              long_description=readme(),
              package_dir={'OceanLab':'OceanLab'},
-             url='https://github.com/iuryt/ocean',
+             url='https://github.com/iuryt/OceanLab',
              author='Iury Tércio Simões de Sousa',
-             author_email='simoesiury@gmail.com',
+             author_email='iury@usp.br',
              license='MIT',
              packages=['OceanLab'],
              py_modules=['utils','ADCP','AO','CTD','EOF','DYN','SEAPLOT'])
