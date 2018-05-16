@@ -4,7 +4,7 @@ Package of Python scripts for Oceanography - Version 2.0  (Python 3.6)
 
 ## Synopsis
 
-This lib was made by **Iury Sousa** (<mailto:simoesiury@gmail.com>) from Brazil to help him and other people that
+This lib was made by **Iury Sousa** (<mailto:iury@usp.br>) from Brazil to help him and other people that
 needs to organize, process and plot CTD and VADCP data from cruise. Mainly directioned
 to mesoscale oceanographers. The number of functions and subpackages and uses increased in process of time, and now
 it's not restricted to mesoscale physical oceanographers.
@@ -22,7 +22,7 @@ Now this package have this subpackages below:
 
 ## Code Example
 
-TODO
+[Check it out!](https://github.com/iuryt/OceanLab/tree/master/Notebooks)
 
 ## Motivation
 
@@ -79,7 +79,6 @@ python -c "from OceanLab import *"
   - *argnear()*: Finds the index for nearest value from list;
   - *select_rad()*: Finds the index to select the section from 2 *matplotlib.pyplot.ginput()* points;
   - *extrap_all()*: Extrapolation function based on data's X gradient;
-  - *dt_serie*: Usefull **Class** for a uneven spaced *datetime* list;
 
 ## Contributors
 
@@ -90,10 +89,10 @@ Everyone can contribute to this code. Some of functions was based on Filipe Fern
 MIT license.
 
 ##WARNING
-Be careful with the use of this. It can have errors.
+Be careful with the use of this. This is not stable.
 
 
-Sao Paulo - SP, february 2017
+Sao Paulo - SP, may 2018
 
 
 [1]:http://iuryt.github.io
