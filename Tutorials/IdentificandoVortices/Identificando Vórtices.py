@@ -6,7 +6,7 @@
 # Neste notebook são criados dados fictícios e analisados os contornos, seguindo o seguinte algoritmo:
 # 
 # * Identificação dos possíveis contornos de vórtice:
-#     1. Identificação dos contornos que possuem somatório de [ângulos](https://newtonexcelbach.com/2014/03/01/the-angle-between-two-vectors-python-version/) maior do que 2$\pi$ 
+#     1. Identificação dos contornos que possuem somatório de [*Winding-Angles*](https://newtonexcelbach.com/2014/03/01/the-angle-between-two-vectors-python-version/) maior do que 2$\pi$ 
 #     2. Descarte dos contornos abertos
 # * Identificação dos contornos externos:
 #     1. Criação das matrizes de todas as combinações possíveis de contornos:
@@ -15,6 +15,11 @@
 #     2. Identificação de quais contornos não contém nenhum outro (mínimos)
 #     3. Desconsideração de quaisquer contorno que contenha mais de um mínimo
 #     4. Identificação de quais contornos não estão contidos em nenhum outro (externos)
+#     
+#  
+#  Os ângulos e o algoritmo foi adaptado de ([Chaigneau et. al, 2008](https://www.sciencedirect.com/science/article/pii/S0079661108001663)):
+#  
+#  ![Winding-Angles](img/winding_angles.png)
 
 # ## Importando pacotes
 

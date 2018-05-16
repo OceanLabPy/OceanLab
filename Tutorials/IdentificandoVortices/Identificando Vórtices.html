@@ -11778,7 +11778,7 @@ div#notebook {
 <h1 id="Identifica&#231;&#227;o-de-v&#243;rtices">Identifica&#231;&#227;o de v&#243;rtices<a class="anchor-link" href="#Identifica&#231;&#227;o-de-v&#243;rtices">&#182;</a></h1><p>Neste notebook são criados dados fictícios e analisados os contornos, seguindo o seguinte algoritmo:</p>
 <ul>
 <li>Identificação dos possíveis contornos de vórtice:<ol>
-<li>Identificação dos contornos que possuem somatório de <a href="https://newtonexcelbach.com/2014/03/01/the-angle-between-two-vectors-python-version/">ângulos</a> maior do que 2$\pi$ </li>
+<li>Identificação dos contornos que possuem somatório de <a href="https://newtonexcelbach.com/2014/03/01/the-angle-between-two-vectors-python-version/"><em>Winding-Angles</em></a> maior do que 2$\pi$ </li>
 <li>Descarte dos contornos abertos</li>
 </ol>
 </li>
@@ -11794,6 +11794,8 @@ div#notebook {
 </ol>
 </li>
 </ul>
+<p>Os ângulos e o algoritmo foi adaptado de (<a href="https://www.sciencedirect.com/science/article/pii/S0079661108001663">Chaigneau et. al, 2008</a>):</p>
+<p><img src="img/winding_angles.png" alt="Winding-Angles"></p>
 
 </div>
 </div>
