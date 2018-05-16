@@ -6,7 +6,7 @@
 # Neste notebook são criados dados fictícios e analisados os contornos, seguindo o seguinte algoritmo:
 # 
 # * Identificação dos possíveis contornos de vórtice:
-#     1. Identificação dos contornos que possuem somatório de ângulos maior do que 2$\pi$
+#     1. Identificação dos contornos que possuem somatório de [ângulos](https://newtonexcelbach.com/2014/03/01/the-angle-between-two-vectors-python-version/) maior do que 2$\pi$ 
 #     2. Descarte dos contornos abertos
 # * Identificação dos contornos externos:
 #     1. Criação das matrizes de todas as combinações possíveis de contornos:
@@ -18,12 +18,13 @@
 
 # ## Importando pacotes
 
-# In[477]:
+# In[489]:
 
 
 import itertools
 
 import numpy as np
+import numpy.linalg as la
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -37,8 +38,16 @@ import seaborn as sns
 
 # ### Identificação dos possíveis contornos de vórtice
 
-# In[478]:
+# In[512]:
 
+
+
+ 
+def windingAngle(v1, v2):
+    cosang = np.dot(v1, v2)
+    sinang = la.norm(np.cross(v1, v2))
+    
+    return np.arctan2(sinang, cosang)
 
 def isEddy(seg,threshold=2*np.pi,onlyclosed=True):
     x,y = seg.T
@@ -46,12 +55,14 @@ def isEddy(seg,threshold=2*np.pi,onlyclosed=True):
     dx,dy = np.diff(x),np.diff(y)
     
     try:
-        angles = list(map(np.math.atan,dy/dx))
+        angles = []
+        for first,second in zip(range(0,len(dx)-1),range(1,len(dx))):
+            angles.append(windingAngle([dx[second],dy[second]],[dx[first],dy[first]]))
         
         if sum(angles)>=threshold:
-            out = False
-        else:
             out = True
+        else:
+            out = False
             
         if onlyclosed:
             if not(all(seg[-1]==seg[0])):
@@ -64,7 +75,7 @@ def isEddy(seg,threshold=2*np.pi,onlyclosed=True):
 
 # ### Identificação dos contornos externos
 
-# In[479]:
+# In[496]:
 
 
 def extLines(segs):
@@ -152,7 +163,7 @@ fig.colorbar(ct)
 
 # ### Cálculo dos contornos
 
-# In[481]:
+# In[500]:
 
 
 c = cntr.Cntr(X, Y, Z)
@@ -170,10 +181,10 @@ for seg in segs:
 
 # ### Identificação dos possíveis contornos de vórtice
 
-# In[482]:
+# In[513]:
 
 
-whichsegs = [isEddy(seg,2*np.pi) for seg in segs]
+whichsegs = [isEddy(seg) for seg in segs]
 
 plt.figure()
 for which,seg in zip(whichsegs,segs):
@@ -186,7 +197,7 @@ for which,seg in zip(whichsegs,segs):
 
 # ### Identificação dos contornos externos dos possíveis vórtices
 
-# In[483]:
+# In[514]:
 
 
 eddysegs = np.array(segs)[whichsegs]
