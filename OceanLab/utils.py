@@ -39,26 +39,6 @@ def ETOPOget(lonmin,lonmax,latmin,latmax):
 
 
 
-class dt_serie:
-       '''
-       Input data is a list of datetime objects.
-       '''
-       value = lambda t: t.toordinal()+\
-                         t.hour/24.+\
-                         t.minute/(24.*60.)+\
-                         t.second/(24.*60.*60.)+\
-                         t.microsecond/(24.*60.*60.*1e+3)
-       def __init__(self,dtime):
-              self.years           = [dt.year for dt in dtime]
-              self.months          = [dt.month for dt in dtime]
-              self.days            = [dt.day for dt in dtime]
-              self.hours           = [dt.hour for dt in dtime]
-              self.seconds         = [dt.second for dt in dtime]
-              self.microseconds    = [dt.microsecond for dt in dtime]
-              self.ordinals        = [value(dt) for dt in dtime]
-              self.dt              = dtime
-
-
 
 
 #SAVING AND LOADING DATA IN PYTHON
