@@ -1,6 +1,0 @@
-INSTALATION:
-
-On terminal, go to DATA_STRUCTURE directory.
-Run:
-sudo bash install.sh
-source ~/.bashrc
