@@ -346,7 +346,9 @@ def extrap_gradient(df,lat=[],lon=[],wgt=0.5):
             #find the next value to apply the coef
             ref_val = extrap_df.iloc[np.hstack(nans),col+1]
             #calculate the new value to the nans in col based on values in col+1
-            new_values = ref_val.reshape(dif.shape)-dif
+            #new_values = ref_val.reshape(dif.shape) - dif
+            new_values = ref_val - dif.squeeze()
             #replace the nans by the new values
-            extrap_df.iloc[np.hstack(nans),col] = new_values.reshape(ref_val.shape)
+            #extrap_df.iloc[np.hstack(nans),col] = new_values.reshape(ref_val.shape)
+            extrap_df.iloc[np.hstack(nans),col] = new_values
     return extrap_df
