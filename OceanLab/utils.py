@@ -54,7 +54,7 @@ def save_pickle(obj, name):
     with open(path, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
-def load_pickle(name):
+def load_pickle(name,enc='latin1'):
     '''
     Load python object as pickle binary.
     '''
@@ -63,7 +63,7 @@ def load_pickle(name):
     else:
         path = name+'.pkl'
     with open(path, 'rb') as f:
-        return pickle.load(f)
+        return pickle.load(f,encoding=enc)
 
 
 def interp2_yaxis(X,Y,Z,yi,kind='linear'):
