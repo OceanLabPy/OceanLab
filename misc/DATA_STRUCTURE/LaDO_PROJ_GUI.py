@@ -1,17 +1,18 @@
 # -*- coding: UTF-8 -*-
-#THIS FUNCTION CREATES THE DIRECTORY STRUCTURE OF DEFINED PROJECT
-#IN THE CURRENT DIRECTORY. THE STRUCTURE AGREE WITH THE FLUXOGRAM
-#CALLED SEEME.pdf/.cmap/.svg/.ps AND WAS MADE TO BE THE PATTERN
-#OF OCEANOGRAPHIC PROJECT PROCESSED BY LaDO (Laboratório de Dinâmica
-#Oceânica) OF UNIVERSITY OF SÃO PAULO.
+#THIS FUNCTION CREATES THE DIRECTORY STRUCTURE FOR A DEFINED PROJECT
+#IN THE CURRENT DIRECTORY. THE STRUCTURE AGREES WITH THE FLUXOGRAM
+# SEEME.pdf/.cmap/.svg/.ps AND WAS MADE TO BE THE PATTERN USED BY 
+# LaDO (Laboratório de Dinâmica Oceânica) OF UNIVERSITY OF SÃO PAULO 
+# FOR DATA PROCESSING OF AN OCEANOGRAPHIC PROJECT
 
 #STRUCT MADE BY: Iury Sousa, Dante Campagnoli and Hélio Almeida
 #SCRIPT MADE BY: Iury Sousa (simoesiury@gmail.com) and Hélio Almeida
 
 import os
 from glob import glob
-import tkFileDialog as filedialog
-from Tkinter import *
+#import tkFileDialog as filedialog
+#from tkinter import filedialog
+from tkinter import *
 import time as tm
 import getpass
 
@@ -157,10 +158,10 @@ seeme2 = os.path.join(script_dir,'SEEME.pdf')
 try:
     # checks if the folder already exists. if the project folder already exists the fuction only updates.
     os.chdir(path)
-    print 'Project Directory Updated!'
+    print('Project Directory Updated!')
 except:
     # if not creates a new project folder
-    print 'Project Directory Created!'
+    print('Project Directory Created!')
     os.system('mkdir '+path)
     os.system('mkdir '+os.path.join(path,'PLAN'))
     os.system('mkdir '+os.path.join(path,'PROJECT_REPORT'))
@@ -205,9 +206,9 @@ The parameter collected in the cruise were:'''%(d,m,y,h,mn,s,user,machine,date_i
     f.close()
     safe.close()
     fig_dirs(os.path.join(path,name))
-    print name
+    print(name)
     for datname in datanames:
-        print datname
+        print(datname)
         dataproc_dirs(datname,os.path.join(path,name))
 elif v==2:
     f=open(os.path.join(path,'README.txt'),'a')

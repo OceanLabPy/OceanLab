@@ -122,7 +122,7 @@ def vectoa(Xg,Yg,X,Y,U,V,corrlenx,corrleny,err,b=0):
 
     return PSI
 
-def scaloa(xc, yc, x, y, t=None, corrlenx=None,corrleny=None, err=None, zc=None):
+def scaloa(xc, yc, x, y, t=[], corrlenx=None,corrleny=None, err=None, zc=None):
   """
   Scalar objective analysis. Interpolates t(x, y) into tp(xc, yc)
   Assumes spatial correlation function to be isotropic and Gaussian in the
@@ -178,7 +178,7 @@ def scaloa(xc, yc, x, y, t=None, corrlenx=None,corrleny=None, err=None, zc=None)
   # Gauss-Markov to get the weights that minimize the variance (OI).
   tp = None
   ep = 1 - np.sum(C.T * np.linalg.solve(A, C.T), axis=0) / (1 - err)
-  if t!=None:
+  if any(t)==True: ##### was t!=None:
     t = np.reshape(t, (n, 1))
     tp = np.dot(C, np.linalg.solve(A, t))
     #if 0: # NOTE: `scaloa2.m`
@@ -189,7 +189,7 @@ def scaloa(xc, yc, x, y, t=None, corrlenx=None,corrleny=None, err=None, zc=None)
     #  tp = tp + mD * np.ones(tp.shape)
     return tp, ep
 
-  if t==None:
+  if any(t)==False: ##### was t==None:
     print("Computing just the interpolation errors.")
     #Normalized mean error. Taking the squared root you can get the
     #interpolation error in percentage.
