@@ -14,12 +14,11 @@ Now this package have this subpackages below:
 
 ## Code Example
 
-TODO*
+Check `examples` folder in our [github repository](github.com/iuryt/OceanLab).
 
 ## Installation
 
 `pip install OceanLab`
-
 
 ## Documentation
 
