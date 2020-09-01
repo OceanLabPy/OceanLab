@@ -37,4 +37,4 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab).
 
 ## Contributors
 
-Everyone can contribute to this code. Some of functions was based on Filipe Fernandes or Cesar Rocha functions and some of them was created with help of Hélio Almeida and Wandrey Watanabe at Laboratório de Dinâmica Oceânica of University of São Paulo (USP).
+Everyone can contribute to this code. Some of functions was based on Filipe Fernandes or Cesar Rocha functions and some of them was created with help of Dante C. Napolitano, Hélio M. R. Almeida and Wandrey Watanabe at Ocean Dynamics Lab of University of São Paulo (USP).
