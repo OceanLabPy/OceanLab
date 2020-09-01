@@ -2,9 +2,9 @@
 import numpy as np
 import seawater as sw
 
-def dyn_amp(A,vi):
+def vmode_amp(A,vi):
     '''
-    This function makes the projection of every dynamical mode to velocity
+    This function makes the projection of every vertical mode to
     timeseries or section matrix to obtain its amplitude. It will be used to
     data reconstruction.
 
@@ -268,7 +268,6 @@ def psi2uv(x,y,psi):
 
     return U,V
 
-#DYNAMICAL MODES
 
 def eqmodes(N2,z,nm,pmodes=False):
     '''
