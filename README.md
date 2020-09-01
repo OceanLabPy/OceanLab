@@ -1,6 +1,6 @@
 # OceanLab
 
-Package of Python scripts for Oceanography  (Python 3.6)
+Package of Python scripts for Oceanography  (Python +3.6)
 
 ## Synopsis
 
@@ -29,7 +29,8 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab).
   - *dyn_amp()*: Makes the projection of every dynamical mode to velocity to obtain its amplitude;
   - *zeta()*: Calculates the vorticity field by velocity field;
   - *psi2uv()*: Calculates the velocity field by stream function scalar field;
-  - *eqmodes()*: Calculates the equatorial dynamical pressure and vertical velocity modes;
+  - *vmodes()*: Calculates the QG pressure modes from N2 profile;
+  - *eqmodes()*: Calculates the equatorial pressure and vertical velocity modes from N2 profile;
 - **EOF**
   - *eoft()*: Calculates the Empirical Orthogonal Functions;
   - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated from Cesar Rocha Matlab version);
