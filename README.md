@@ -34,7 +34,7 @@ TODO*
   - *eqmodes()*: Calculates the equatorial dynamical pressure and vertical velocity modes;
 - **EOF**
   - *eoft()*: Calculates the Empirical Orthogonal Functions;
-  - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated by Cesar Rocha Matlab version);
+  - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated from Cesar Rocha Matlab version);
 
 ## Contributors
 
