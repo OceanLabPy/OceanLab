@@ -2,7 +2,6 @@
 import numpy as np
 import seawater as sw
 
-
 def dyn_amp(A,vi):
     '''
     This function makes the projection of every dynamical mode to velocity
@@ -99,7 +98,7 @@ def zeta(x,y,U,V):
         a3.set_title('NUMERIC')
 
       AUTHOR:
-       Wandrey Watanabe e Iury Sousa    - 29 Jun 2016
+       Iury T. Simoes-Sousa and Wandrey Watanabe - 29 Jun 2016
        Laboratório de Dinâmica Oceânica - IOUSP
        ======================================================================
 
@@ -212,7 +211,7 @@ def psi2uv(x,y,psi):
       plt.axis('equal')
 
       AUTHOR:
-       Wandrey Watanabe e Iury Sousa    - 12 May 2016
+       Iury T. Simoes-Sousa and Wandrey Watanabe - 12 May 2016
        Laboratório de Dinâmica Oceânica - IOUSP
        ======================================================================
     '''
@@ -306,7 +305,7 @@ def eqmodes(N2,z,nm,pmodes=False):
 
             Returned only if input pmodes=True
 
-    made by Hélio Almeida, Iury Sousa and Wandrey Watanabe
+    made by Iury T. Simoes-Sousa, Hélio Almeida and Wandrey Watanabe
     Laboratório de Dinâmica Oceânica - Universidade de São Paulo
                                 2016
     '''

@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def eoft(trmat,nm=None):
     '''
     evals_perc,evecs_norm,amp = eoft(trmat)
