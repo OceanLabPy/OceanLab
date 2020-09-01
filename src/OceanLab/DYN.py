@@ -52,51 +52,6 @@ def zeta(x,y,U,V):
       OUTPUT:
          ZETA  = Relative vorticity field [s^-1]
 
-      EXAMPLE:
-        #Subset function for quiver plot
-        st = 2
-        sub = lambda P: P[::st,::st]
-
-        #Number of points
-        q = 30
-        #Grid
-        X,Y = np.meshgrid(np.linspace(-10,10,q),np.linspace(-20,20,q))
-
-        #Length in km
-        ly,lx = 40*60*1852,10*60*1852
-        #Velocity field
-        U     = np.cos(60*1852*2*np.pi*Y/ly)
-        V     = np.cos((np.pi/2)+60*1852*2*np.pi*X/lx)
-
-        #Correction to longitudes
-        coslat = np.cos(np.pi*Y/180)
-
-        #Analytical Vorticity
-        Va = -(2*np.pi/(lx*coslat))*np.sin((np.pi/2)+60*1852*2*np.pi*X/lx)+\
-            (2*np.pi/ly)*np.sin(60*1852*2*np.pi*Y/ly)
-        #Numerical Vorticity
-        Vn = rel_vort(X,Y,U,V)
-
-        #Scale factor to apply on Vn
-        fac = Va.max()/Vn.max()
-
-        #Figure
-        #args for zeta plot
-        kw = {'cmap':'RdBu_r','alpha':0.8}
-        fig,(a1,a2,a3) = plt.subplots(1,3,figsize=(15,8))
-        a1.pcolormesh(X,Y,Va,**kw)
-        a1.quiver(sub(X),sub(Y),sub(U),sub(V),scale=10,linewidths=0.5)
-        a1.set_title('ANALYTICAL')
-
-        C = a2.contour(X,Y,(Va-Vn)*100/Va.max(),np.arange(0,100,5),colors='k')
-        a2.clabel(C,fmt='%2i')
-        a2.set_title('ERROR [%]')
-
-        A = a3.pcolormesh(X,Y,Vn*fac,**kw)
-        fig.colorbar(A)
-        a3.quiver(sub(X),sub(Y),sub(U),sub(V),scale=10,linewidths=0.5)
-        a3.set_title('NUMERIC')
-
       AUTHOR:
        Iury T. Simoes-Sousa and Wandrey Watanabe - 29 Jun 2016
        Laboratório de Dinâmica Oceânica - IOUSP
@@ -197,19 +152,6 @@ def psi2uv(x,y,psi):
          u   = velocity zonal component [m s^-1]
          v   = velocity meridional component [m s^-1]
 
-      EXAMPLE:
-      import numpy as np
-      import matplotlib.pyplot as plt
-      x,y = np.meshgrid(np.arange(-30,-20,0.5),np.arange(-35,-25,0.5))
-      psi = (x-np.mean(np.mean(x)))**2 + (y-np.mean(np.mean(y)))**2
-
-      plt.ion()
-      plt.figure()
-      u,v = psi2uv(x,y,psi)
-      plt.contourf(x,y,psi,30,cmap='Spectral_r')
-      plt.quiver(x,y,u,v,color='w')
-      plt.axis('equal')
-
       AUTHOR:
        Iury T. Simoes-Sousa and Wandrey Watanabe - 12 May 2016
        Laboratório de Dinâmica Oceânica - IOUSP
@@ -269,7 +211,7 @@ def psi2uv(x,y,psi):
     return U,V
 
 
-def eqmodes(N2,z,nm,pmodes=False):
+def eqmodes(N2,z,nm,lat,pmodes=False):
     '''
     This function computes the equatorial velocity modes
 
@@ -309,8 +251,6 @@ def eqmodes(N2,z,nm,pmodes=False):
                                 2016
     '''
 
-    #needed to the problem
-    lat = 0
     #nm will be the number of baroclinic modes
     nm -= 1 #Barotropic mode will be added
 
@@ -410,3 +350,71 @@ def eqmodes(N2,z,nm,pmodes=False):
     else:
         Si = np.hstack([sb,Si])
         return Si,radii
+
+
+
+def vmodes(N2,z,nm,lat,ubdy='N',lbdy='N'):
+    f0 = sw.f(lat)
+    dz = np.abs(z[1] - z[0])
+
+    # f2n2 array
+    f2n2 = (f0**2)/N2
+
+    # assembling matrices
+
+    # N2F2 matrix
+    N2F2 = np.eye(z.size-1)
+    for i in range(0, z.size-1):
+        N2F2[i,i] = (f2n2[i] + f2n2[i+1])/2
+
+    # 1st order difference matrix
+    A = np.eye(z.size)[:,:-1]
+    for i in range(1,z.size):
+        A[i,i-1] = -1	
+
+    A = A/dz	
+
+    # linear operator C = A*N2F2*(A.transpose())
+    A = np.matrix(A)
+    N2F2 = np.matrix(N2F2)
+
+    C = A*N2F2*A.transpose()
+
+    if ubdy == 'D':
+        C = C[1:,1:]
+    if lbdy == 'D':
+        C = C[:-1,:-1]
+
+    # solve the eigenvalue problem
+    lam,fi = np.linalg.eig(C)
+
+    i = np.argsort(lam)
+    ei = lam[i]
+    fi = fi[:,i]
+
+    ei = ei[:nm]
+    fi = fi[:,:nm]
+
+    if ubdy == 'D':
+        fi = np.append(np.matrix(np.zeros(nm)),fi, axis=0)
+    if lbdy == 'D':
+        fi = np.append(fi,np.matrix(np.zeros(nm)), axis=0)
+
+    # normalizing to get orthonormal modes 
+    H = np.abs(z).max()
+
+    for i in range(nm):
+        s = np.sqrt(dz*((np.array(fi[1:,i])**2 + np.array(fi[:-1,i])**2)/2/H).sum())
+        fi[:,i] = fi[:,i]/s
+
+    # to keep consistency multiply by plus/minus to make the leading term positive
+    for i in range(nm):
+        if np.sign(fi[1,i]) < 0:
+            fi[:,i] = -fi[:,i]
+
+    # compute the deformation radii [km]; the barotropic radius is computed by sqrt(gH)/f0
+    radii = np.zeros(nm)
+    radii[0] = np.sqrt(9.81*H)/np.abs(f0)/1000
+    radii[1:] = 1/np.sqrt(ei[1:])/1000
+
+    return fi, radii
