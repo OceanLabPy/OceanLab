@@ -23,8 +23,8 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab).
 ## Documentation
 
 - **OA**
-  - *vectoa()*: Objective analysis for vectorial fields (Adapted from Filipe Fernandes function);
-  - *scaloa()*: Objective analysis for scalar fields (Adapted from Filipe Fernandes function);
+  - *vectoa()*: Objective analysis for vectorial fields;
+  - *scaloa()*: Objective analysis for scalar fields;
 - **DYN**
   - *dyn_amp()*: Makes the projection of every dynamical mode to velocity to obtain its amplitude;
   - *zeta()*: Calculates the vorticity field by velocity field;

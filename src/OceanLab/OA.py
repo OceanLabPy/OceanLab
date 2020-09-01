@@ -3,6 +3,8 @@ import numpy as np
 
 def vectoa(Xg,Yg,X,Y,U,V,corrlenx,corrleny,err,b=0):
     '''
+    (Adapted from Filipe Fernandes function)
+    
     Vectoa is a vectorial objective analysis function.
 
     It interpolates a velocity field (U and V, east and north velocity components)
@@ -37,7 +39,6 @@ def vectoa(Xg,Yg,X,Y,U,V,corrlenx,corrleny,err,b=0):
     PYTHON VERSION by:
        Iury Sousa and Hélio Almeida - 30 May 2016
        Laboratório de Dinâmica Oceânica - IOUSP
-
    ======================================================================'''
    # making sure that the input variables aren't changed
     xc,yc,x,y,u,v=Xg.copy(),Yg.copy(),X.copy(),Y.copy(),U.copy(),V.copy()
@@ -112,6 +113,7 @@ def vectoa(Xg,Yg,X,Y,U,V,corrlenx,corrleny,err,b=0):
 
 def scaloa(xc, yc, x, y, t=[], corrlenx=None,corrleny=None, err=None, zc=None):
     """
+    (Adapted from Filipe Fernandes function)
     Scalar objective analysis. Interpolates t(x, y) into tp(xc, yc)
     Assumes spatial correlation function to be isotropic and Gaussian in the
     form of: C = (1 - err) * np.exp(-d**2 / corrlen**2) where:
