@@ -2,25 +2,15 @@
 
 Package of Python scripts for Oceanography  (Python +3.6)
 
-## Synopsis
-
-This lib was made by **Iury T. Simoes-Sousa** (<mailto:simoesiury@gmail.com>).
-
-Now this package have this subpackages below:
-
-- **OA**
-- **DYN**
-- **EOF**
-
 ## Code Example
 
-Check `examples` folder in our [github repository](github.com/iuryt/OceanLab).
+Check `examples` folder in our [github repository](github.com/iuryt/OceanLab/examples).
 
 ## Installation
 
 `pip install OceanLab`
 
-## Documentation
+## Modules
 
 - **OA**
   - *vectoa()*: Objective analysis for vectorial fields;

@@ -6,7 +6,7 @@ with open('README.md','r') as fh:
 
 setup(
     name='OceanLab',
-    version='0.0.1',
+    version='0.0.5',
     description='Python functions for Physical Oceanography',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -15,7 +15,7 @@ setup(
     author_email='simoesiury@gmail.com',
     license='MIT',
     py_modules=['OA','EOF','DYN'],
-    package_dir={'': 'src'},
+    package_dir={'': 'src/'},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
