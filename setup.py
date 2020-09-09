@@ -7,6 +7,7 @@ with open('README.md','r') as fh:
 setup(
     name='OceanLab',
     version='0.0.5',
+    packages = ['OceanLab'],
     description='Python functions for Physical Oceanography',
     long_description=long_description,
     long_description_content_type='text/markdown',
