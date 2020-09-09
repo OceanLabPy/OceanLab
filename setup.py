@@ -1,22 +1,25 @@
 from setuptools import setup
 
+def read(file):
+    return open(file, 'r').read()
 
-with open('README.md','r') as fh:
-    long_description = fh.read()
+LONG_DESCRIPTION = read('README.md')
+LICENSE = read('LICENSE.txt')
 
 setup(
     name='OceanLab',
-    version='0.0.5',
-    packages = ['OceanLab'],
+    version='0.0.7',
+    packages=['OceanLab'],
+    include_package_data=True,
     description='Python functions for Physical Oceanography',
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
+    download_url = 'https://pypi.python.org/pypi/OceanLab',
     url='https://github.com/iuryt/OceanLab',
     author='Iury T. Simoes-Sousa',
     author_email='simoesiury@gmail.com',
-    license='MIT',
+    license=LICENSE,
     py_modules=['OA','EOF','DYN'],
-    package_dir={'': 'src/'},
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
