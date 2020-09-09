@@ -1,0 +1,3 @@
+include *.txt
+recursive-include examples *.ipynb
+recursive-include src *.py
