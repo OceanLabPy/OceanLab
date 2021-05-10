@@ -1,5 +1,9 @@
 import numpy as np
 
+# functions
+#=========================================
+# COMPUTE EOFS
+#=========================================
 def eoft(trmat,nm=None):
     '''
     evals_perc,evecs_norm,amp = eoft(trmat)
@@ -42,35 +46,31 @@ def eoft(trmat,nm=None):
 
     return evals_perc,evecs_norm,amp
 
-
-
+#=========================================
+# FILL GAPS WITH EOFS
+#=========================================
 def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
-    #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% vi = my_eof_interp(M,nmodes)
-    #%   This function try to fill gappy data using its EOFs
-    #%
-    #%   M is the data Matrix (generaly the diferent stations
-    #%         are on the columns);
-    #%
-    #%    nmodes is the number of statiscally significant EOF modes (to be used for the series reconstruction)
-    #%
-    #%% The method -- based on Beckers & Rixen (2003, JAOTech)
-    #%
-    #% The algorithm proposed by the authors is as follows.  (see Eqs. (13) and (14) from Beckers & Rixen)
-    #%
-    #% (I)   Put zero in the GAPPY positions ("unbiased INITIAL GUESS, by assuming that the removed mean was unbiased).
-    #%
-    #% (II)  Then you can have a first estimative of the EOFs.
-    #%
-    #% (III) You can reconstruct the series using the statiscally significant modes (e.g.: determined using Monte Carlo
-    #%           simulations as in Preisendorfer [1988] -- OBS: the authors propose another method using cross validation
-    #%           during the iterative process)
-    #%
-    #% (IV)  Substitute the reconstructed series ONLY in the GAPPY positions in your original matrix.
-    #%
-    #% (V)   Run steps (II), (III) and (IV) iteractively till its convergence (i.e. compare the reconstructed series at time
-    #%           t+1 with that at time t).
-    #%
-    #% OBS: It doesn't work for filling gaps simultaneously in all depths.
+
+    """
+    vi = my_eof_interp(M,nmodes)
+
+    This function try to fill gappy data using its EOFs
+
+    INPUT:
+    -> M: the data Matrix (generaly the diferent stations are on the columns);
+    -> nmodes: the number of statiscally significant EOF modes (to be used for the series reconstruction)
+
+    The method -- based on Beckers & Rixen (2003, JAOTech)
+
+    The algorithm proposed by the authors is as follows.  (see Eqs. (13) and (14) from Beckers & Rixen)
+        (I) Put zero in the GAPPY positions ("unbiased INITIAL GUESS, by assuming that the removed mean was unbiased).
+        (II) Then you can have a first estimative of the EOFs.
+        (III) You can reconstruct the series using the statiscally significant modes (e.g.: determined using Monte Carlo simulations as in Preisendorfer [1988] -- OBS: the authors propose another method using cross validation during the iterative process)
+        (IV) Substitute the reconstructed series ONLY in the GAPPY positions in your original matrix.
+        (V) Run steps (II), (III) and (IV) iteractively till its convergence (i.e. compare the reconstructed series at time t+1 with that at time t).
+
+    %%%%% OBS: my_eof_interp doesn't work for filling gaps simultaneously in all depths.
+    """
 
     Mmean = np.nanmean(M,axis=1)
 
