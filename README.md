@@ -24,7 +24,11 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab/exa
 - **EOF**
   - *eoft()*: Calculates the Empirical Orthogonal Functions;
   - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated from Cesar Rocha Matlab version);
+- **UTILS**
+  - *argdistnear()*: Searchs the position of the closest points in an array to a reference point;
+  - *meaneddy()*: Performs an eddy-mean decomposing with a low-pass filter;
+
 
 ## Contributors
 
-Everyone can contribute to this code. Some of functions was based on Filipe Fernandes or Cesar Rocha functions and some of them was created with help of Dante C. Napolitano, Hélio M. R. Almeida and Wandrey Watanabe at Ocean Dynamics Lab of University of São Paulo (USP).
+Everyone can contribute to this code. Some of functions were based on Filipe Fernandes or Cesar Rocha functions and some of them were created with help of Dante C. Napolitano, Hélio M. R. Almeida and Wandrey Watanabe at Ocean Dynamics Lab of University of São Paulo (USP).
