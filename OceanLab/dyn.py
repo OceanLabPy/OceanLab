@@ -2,21 +2,36 @@
 import numpy as np
 import seawater as sw
 
+# ===========================================================
+# DYNAMICAL MODES AMPLITUDE
+# ===========================================================
 def vmode_amp(A,vi):
     '''
     This function makes the projection of every vertical mode to
-    timeseries or section matrix to obtain its amplitude. It will be used to
-    data reconstruction.
+    timeseries or section matrix to obtain its amplitude.
+    It will be used to data reconstruction.
 
     Operation: ((A'*A)^-1)*(A'*vi)
+    =============================================================
+    
+    INPUT:
+       A  = 
+       vi = 
 
+    OUTPUT:
+       AMP = 
+
+    ==============================================================
     '''
+
     return np.dot(np.linalg.inv(np.dot(A.T,A)),np.dot(A.T,vi))
 
-
+# ===========================================================
+# RELATIVE VORTICITY
+# ===========================================================
 def zeta(x,y,U,V):
     '''
-     ZETA k-component of rotational by velocity field
+    ZETA k-component of rotational by velocity field
        Returns the scalar field of vorticity from U and V
        velocity components. X and Y are longitude and latitude
        matrices, respectively, as U and V. All matrices have
@@ -39,25 +54,24 @@ def zeta(x,y,U,V):
        (JM = 0) o ---------- o ---------- o ---------- o --- ...
             (IM = 0)     (IM = 1)     (IM = 2)     (IM = 3)
 
-       -----------------------------------------------------------------
+    ================================================================
+    USAGE:  ZETA = zeta(x,y,u,v)
 
-      USAGE:  u,v = psi2uv(x,y,psi)
+    INPUT:
+       x     = decimal degrees (+ve E, -ve W) [-180..+180]
+       y     = decimal degrees (+ve N, -ve S) [- 90.. +90]
+       u     = velocity zonal component [m s^-1]
+       v     = velocity meridional component [m s^-1]
 
-      INPUT:
-         x     = decimal degrees (+ve E, -ve W) [-180..+180]
-         y     = decimal degrees (+ve N, -ve S) [- 90.. +90]
-         u     = velocity zonal component [m s^-1]
-         v     = velocity meridional component [m s^-1]
+    OUTPUT:
+       ZETA  = Relative vorticity field [s^-1]
 
-      OUTPUT:
-         ZETA  = Relative vorticity field [s^-1]
-
-      AUTHOR:
+    AUTHOR:
        Iury T. Simoes-Sousa and Wandrey Watanabe - 29 Jun 2016
        Laboratório de Dinâmica Oceânica - IOUSP
-       ======================================================================
-
+    ================================================================
     '''
+
     #função para cálculo de ângulos
     angcalc = lambda dy,dx: np.math.atan2(dy,dx)
 
@@ -116,16 +130,21 @@ def zeta(x,y,U,V):
 
     return ZETA
 
+# ===========================================================
+# U AND V FROM STREAMFUNCTION
+# ===========================================================
 def psi2uv(x,y,psi):
     '''
-     PSI2UV Velocity components from streamfunction
-       Returns the velocity components U and V
-       from streamfunction PSI. X and Y are longitude and latitude matrices,
-       respectively, as PSI. All matrices have same dimension.
+    PSI2UV Velocity components from streamfunction
 
-       --> !!! IMPORTANT !!!  <-----------------------------------------
-       The grid indexes IM and JM must have origin on the left-inferior
-       corner, increasing to right and to up, respectively.
+      Returns the velocity components U and V
+       from streamfunction PSI. X and Y are longitude and latitude 
+       matrices, respectively, as PSI.
+       All matrices have same dimension.
+
+       --> !!! IMPORTANT !!!  <-----------------------------------
+       The grid indexes IM and JM must have origin on the 
+       lower-left corner, increasing to right and to up.
 
                                   GRID
                 :            :            :            :
@@ -139,23 +158,24 @@ def psi2uv(x,y,psi):
        (JM = 0) o ---------- o ---------- o ---------- o --- ...
             (IM = 0)     (IM = 1)     (IM = 2)     (IM = 3)
 
-       -----------------------------------------------------------------
+    ==============================================================
 
-      USAGE:  u,v = psi2uv(x,y,psi)
+    USAGE:  u,v = psi2uv(x,y,psi)
 
-      INPUT:
-         x     = decimal degrees (+ve E, -ve W) [-180..+180]
-         y     = decimal degrees (+ve N, -ve S) [- 90.. +90]
-         psi   = streamfunction [m^2 s^-1]
+    INPUT:
+       x    = decimal degrees (+ve E, -ve W) [-180..+180]
+       y    = decimal degrees (+ve N, -ve S) [- 90.. +90]
+       psi  = streamfunction [m^2 s^-1]
 
-      OUTPUT:
-         u   = velocity zonal component [m s^-1]
-         v   = velocity meridional component [m s^-1]
+    OUTPUT:
+       u    = velocity zonal component [m s^-1]
+       v    = velocity meridional component [m s^-1]
 
-      AUTHOR:
-       Iury T. Simoes-Sousa and Wandrey Watanabe - 12 May 2016
-       Laboratório de Dinâmica Oceânica - IOUSP
-       ======================================================================
+    AUTHOR:
+       Iury T. Simoes-Sousa and Wandrey Watanabe
+       May 2016 - Laboratório de Dinâmica Oceânica - IOUSP
+       Universidade de São Paulo
+    ==========================================================
     '''
 
     #função para cálculo de ângulos
@@ -210,45 +230,38 @@ def psi2uv(x,y,psi):
 
     return U,V
 
-
+# ===========================================================
+# EQUATORIAL MODES
+# ===========================================================
 def eqmodes(N2,z,nm,lat,pmodes=False):
     '''
     This function computes the equatorial velocity modes
 
-    ========================================================
+    ============================================================
 
-    Input:
+    INPUT:
+       N2     = Brunt-Vaisala frequency data array
+       z      = Depth data array (equaly spaced)
+       lat    = Latitude scalar
+       nm     = Number of modes to be computed
+       pmodes = If the return of pressure modes is required.
+                 (Default is False)
 
-        N2 - Brunt-Vaisala frequency data array
+    OUTPUT:
+       Si     = Equatorial modes matrix with MxN dimension being:
+                 M = z array size
+                 N = nm
+       Rdi    = Deformation Radii array
+       Fi     = Pressure modes matrix with MxN dimension being:
+                 M = z array size
+                 N = nm
+                 (Returned only if input pmodes=True)
 
-        z - Depth data array (equaly spaced)
-
-        lat - Latitude scalar
-
-        nm - Number of modes to be computed
-
-        pmodes - If the return of pressure modes is required.
-                 Default is False
-
-    ========================================================
-
-    Output:
-
-        Si - Equatorial modes matrix with MxN dimension being:
-                M = z array size
-                N = nm
-
-        Rdi - Deformation Radii array
-
-        Fi - Pressure modes matrix with MxN dimension being:
-                M = z array size
-                N = nm
-
-            Returned only if input pmodes=True
-
-    made by Iury T. Simoes-Sousa, Hélio Almeida and Wandrey Watanabe
-    Laboratório de Dinâmica Oceânica - Universidade de São Paulo
-                                2016
+    AUTHOR:
+       Iury T. Simoes-Sousa, Hélio Almeida and Wandrey Watanabe
+       2016 Laboratório de Dinâmica Oceânica
+       Universidade de São Paulo
+    ============================================================
     '''
 
     #nm will be the number of baroclinic modes
@@ -352,8 +365,22 @@ def eqmodes(N2,z,nm,lat,pmodes=False):
         return Si,radii
 
 
-
+# ===========================================================
+# DYNAMICAL MODES
+# ===========================================================
 def vmodes(N2,z,nm,lat,ubdy='N',lbdy='N'):
+
+    """
+    
+    ========================================================
+    INPUT:
+
+    OUTPUT:
+
+    AUTHOR:
+    ========================================================
+    """
+
     f0 = sw.f(lat)
     dz = np.abs(z[1] - z[0])
 
