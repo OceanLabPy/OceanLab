@@ -8,7 +8,7 @@ LICENSE = read('LICENSE.txt')
 
 setup(
     name='OceanLab',
-    version='0.0.7',
+    version='0.1.0',
     packages=['OceanLab'],
     include_package_data=True,
     description='Python functions for Physical Oceanography',
@@ -30,5 +30,9 @@ setup(
     install_requires = [
         'seawater ~= 3.3',
         'numpy ~= 1.18',
+        'scipy ~= 1.6',
+        'xarray ~= 0.18',
+        'dask ~= 2021.06',
+        'dask[distributed] ~= 2021.06'
     ],
 )

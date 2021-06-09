@@ -1,2 +1,6 @@
 numpy >= 1.8.2
 seawater >= 3.3.1
+scipy >= 1.6.3
+xarray >= 0.18.2
+dask >= 2021.06.0
+dask[distributed] >= 2021.06.0
