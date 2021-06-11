@@ -65,10 +65,7 @@ def zeta(x,y,U,V):
 
     OUTPUT:
        ZETA  = Relative vorticity field [s^-1]
-
-    AUTHOR:
-       Iury T. Simoes-Sousa and Wandrey Watanabe - 29 Jun 2016
-       Laboratório de Dinâmica Oceânica - IOUSP
+       
     ================================================================
     '''
 
@@ -171,10 +168,6 @@ def psi2uv(x,y,psi):
        u    = velocity zonal component [m s^-1]
        v    = velocity meridional component [m s^-1]
 
-    AUTHOR:
-       Iury T. Simoes-Sousa and Wandrey Watanabe
-       May 2016 - Laboratório de Dinâmica Oceânica - IOUSP
-       Universidade de São Paulo
     ==========================================================
     '''
 
@@ -257,10 +250,6 @@ def eqmodes(N2,z,nm,lat,pmodes=False):
                  N = nm
                  (Returned only if input pmodes=True)
 
-    AUTHOR:
-       Iury T. Simoes-Sousa, Hélio Almeida and Wandrey Watanabe
-       2016 Laboratório de Dinâmica Oceânica
-       Universidade de São Paulo
     ============================================================
     '''
 
