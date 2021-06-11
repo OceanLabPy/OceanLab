@@ -34,12 +34,7 @@ def vectoa(Xg,Yg,X,Y,U,V,corrlenx,corrleny,err,b=0):
         PSI - Streamfuction field matrix with MxN dimension.
               The dimension of the output is always the same of XC & YC
 
-   ======================================================================
-
-    PYTHON VERSION by:
-       Iury Sousa and Hélio Almeida - 30 May 2016
-       Laboratório de Dinâmica Oceânica - IOUSP
-   ======================================================================'''
+   '''
    # making sure that the input variables aren't changed
     xc,yc,x,y,u,v=Xg.copy(),Yg.copy(),X.copy(),Y.copy(),U.copy(),V.copy()
 
