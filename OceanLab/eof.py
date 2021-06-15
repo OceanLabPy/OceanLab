@@ -121,3 +121,122 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
     vi = (M.T+Mmean).T
 
     return vi
+
+#=========================================
+# PERFORM COMPLEX EOF
+#=========================================
+from scipy.signal import hilbert
+import scipy.linalg as la
+import numpy as np
+from dask import delayed
+from scipy.signal import hilbert
+import scipy.linalg as la
+import numpy as np
+
+def ceof(data, nkp = 10):
+    ''' Complex (Hilbert) EOF
+    First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
+    (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
+    
+    Translated to Python by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Mar/2021
+    ==============================================================================
+    Inputs:
+    -> data: original data set [time, space]
+    -> nkp:  number of modes to output (default = 10)
+
+    ==============================================================================
+    Outputs:
+    -> lamda: eigenvalues
+    -> load:  First nkp Complex Loadings or eigenvectors [space, nkp]
+    -> pcs:   First nkp Complex Principal Components or amplitudes [time, nkp]
+    -> per:   percent variance explained (real eigenvalues)
+    ==============================================================================
+    Version 2.0.0 by Felipe Vilela da Silva on 25/May/2021. 
+        Now, it is possible to input data with NaN values. 
+        The quantity of lambda is related the amount of not Nan values in data
+    '''
+    load_real = np.zeros([data.shape[1], nkp])*np.nan
+    load_imag = np.zeros([data.shape[1], nkp])*np.nan
+    # It is necessary to remove the nan values of the matrix to solve the eigenvalue problem
+    nan_values = np.isnan(data[0,:]) # We can just look at each coordinate along a single time
+    data = data[:,~nan_values]   # Then, we remove all these coordinates in all of the occurences
+    
+    ntim, npt = data.shape
+    
+    # Hilbert transform: input sequence x and returns a complex result of the same length
+    print('1: Performing Hilbert transform')
+    data_hilbert = hilbert(data)
+    # Compute the covariance matrix in the Hilbert transform
+    print('2: Computing covariance matrix')
+    c = delayed(np.dot)(data_hilbert.conjugate().T, data_hilbert).compute()/ntim
+    print('3: Solving the eigenvalue problem')
+    lamda, loadings = delayed(la.eig)(c).compute() # lamda: eigenvalue, loadings: eigenvectors
+    
+    l = lamda.conjugate().T; k = np.argsort(l)
+    lamda, loadings = np.flip(l[k]), np.fliplr(loadings[:,k])
+    loadings = loadings[:,:nkp]
+    
+    per = lamda.real*100/np.sum(lamda.real)
+    pcs = np.dot(data_hilbert,loadings)
+    
+    load_real[~nan_values,:] = loadings.real.copy()
+    load_imag[~nan_values,:] = loadings.imag.copy()
+    load = load_real + 1j*load_imag
+    print('Done! \U0001F600')
+    
+    return lamda, load, pcs, per
+
+def amplitude_phase(evecs, amp):
+    ''' Complex (Hilbert) EOF
+    First written in MATLAB and found in the webpage below 
+    (https://www.jsg.utexas.edu/fu/files/GEO391-W11-CEOF.pdf)
+    
+    Translated to Python by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Mar/2021 
+    ===========================================================================
+    Inputs:
+    -> evecs: First nkp Complex Loadings or eigenvectors [space, nkp]
+    -> amp:   First nkp Complex Principal Components or amplitudes [time, nkp]
+
+    ===========================================================================
+    Outputs:
+    -> sp_amp:   Spatial amplitude [space, nkp]
+    -> sp_phase: Spatial phase [space, nkp]
+    -> t_amp:    Temporal amplitude [time, nkp]
+    -> t_phase:  Temporal phase [time, nkp]
+    ===========================================================================
+    '''
+    # Spatial amplitude
+    sp_amp = pow(np.multiply(evecs, np.conj(evecs)),0.5)
+    theta = np.arctan2(evecs.imag, evecs.real)
+    # Spatial phase
+    sp_phase = np.divide(np.multiply(theta, 180), np.pi)
+
+    # Temporal amplitude
+    t_amp = pow(np.multiply(amp, np.conj(amp)), 0.5)
+    # Temporal phase
+    phit = np.arctan2(amp.imag, amp.real)
+    t_phase = np.divide(np.multiply(phit, 180), np.pi)
+    
+    return sp_amp, sp_phase, t_amp, t_phase 
+
+def reconstruct_ceof(amp, modes, n, day):
+    ''' Reconstrucion of CEOF modes individually following Majumder et al. (2019)
+    
+    Written by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Apr/2021 
+    ===========================================================================
+    Inputs:
+    -> amp:    amplitude or coefficient of expansion [time, n]
+    -> modes:  eigenvector or loading [lat, lon, n]
+    -> n:      mode to be reconstructed. 0 is the first
+    -> day:    day to be reconstructed. 0 is the first
+    ===========================================================================
+    Output:
+    -> Rec_ceof: Reconstruction of the CEOF field [time, lat, lon]
+    ===========================================================================
+    '''   
+    
+    # Majumder et al (2019) compute the reconstructed CEOF field as the real part of the multiplication between
+    # the coefficient of expansion (i.e., amplitude) and the complex conjugate of the loading (i.e., mode)
+    Rec_ceof = amp[day,n]*np.conj(modes[:,:,n])
+    return Rec_ceof.real
+
