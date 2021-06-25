@@ -127,13 +127,11 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 #=========================================
 from scipy.signal import hilbert
 import scipy.linalg as la
-import numpy as np
 from dask import delayed
 from scipy.signal import hilbert
-import scipy.linalg as la
-import numpy as np
+import xarray as xr
 
-def ceof(data, nkp = 10):
+def ceof(lon, lat, data, nkp = 10):
     ''' Complex (Hilbert) EOF
     First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
     (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
@@ -141,31 +139,49 @@ def ceof(data, nkp = 10):
     Translated to Python by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Mar/2021
     ==============================================================================
     Inputs:
-    -> data: original data set [time, space]
+    -> lon: longitudes (array)
+    -> lat: latitude (array)
+    -> data: original data set [time, lat, lon]
+      -> Note: the mean field in each coordinate is subtracted within the function
+      -> Thus, do not remove the time-mean before inputing in the fuction.
     -> nkp:  number of modes to output (default = 10)
 
     ==============================================================================
-    Outputs:
-    -> lamda: eigenvalues
-    -> load:  First nkp Complex Loadings or eigenvectors [space, nkp]
-    -> pcs:   First nkp Complex Principal Components or amplitudes [time, nkp]
+    Outputs in a DataArray:
     -> per:   percent variance explained (real eigenvalues)
+    -> modes:  First nkp Complex Loadings or eigenvectors [lat, lon, nkp]
+    -> sp_amp:   Spatial amplitude [lat, lon, nkp]
+    -> sp_phase: Spatial phase [lat, lon, nkp]
+    -> pcs:   First nkp Complex Principal Components or amplitudes [time, nkp]
+    -> t_amp:    Temporal amplitude [time, nkp]
+    -> t_phase:  Temporal phase [time, nkp]    
     ==============================================================================
     Version 2.0.0 by Felipe Vilela da Silva on 25/May/2021. 
         Now, it is possible to input data with NaN values. 
-        The quantity of lambda is related the amount of not Nan values in data
-    '''
-    load_real = np.zeros([data.shape[1], nkp])*np.nan
-    load_imag = np.zeros([data.shape[1], nkp])*np.nan
-    # It is necessary to remove the nan values of the matrix to solve the eigenvalue problem
-    nan_values = np.isnan(data[0,:]) # We can just look at each coordinate along a single time
-    data = data[:,~nan_values]   # Then, we remove all these coordinates in all of the occurences
+    ==============================================================================
+    Version 3.0.0 by Felipe Vilela da Silva on 17/Jun/2021. 
+        New modifications:
+        (i)  The function organizes the data as time vs space and subtract the mean field in each coordinate
+        (ii) It returns all the variables related to CEOF in a DataArray
+    ''' 
+    # Organizing the data as time vs space
+    data_ceof = org_data_ceof(lon, lat, data)
+    # We need to remove the mean field (i.e., the trend) in each coordinate to 
+    # evaluate the variability 
+    data_ceof = data_ceof - np.nanmean(data_ceof,axis=0)
     
-    ntim, npt = data.shape
+    # The variables below are useful later
+    load_real = np.zeros([data_ceof.shape[1], nkp])*np.nan
+    load_imag = np.zeros([data_ceof.shape[1], nkp])*np.nan
+    # It is necessary to remove the nan values of the matrix to solve the eigenvalue problem
+    nan_values = np.isnan(data_ceof[0,:]) # We can just look at each coordinate along a single time
+    data_ceof = data_ceof[:,~nan_values]   # Then, we remove all these coordinates in all of the occurences
+    
+    ntim, npt = data_ceof.shape
     
     # Hilbert transform: input sequence x and returns a complex result of the same length
     print('1: Performing Hilbert transform')
-    data_hilbert = hilbert(data)
+    data_hilbert = hilbert(data_ceof)
     # Compute the covariance matrix in the Hilbert transform
     print('2: Computing covariance matrix')
     c = delayed(np.dot)(data_hilbert.conjugate().T, data_hilbert).compute()/ntim
@@ -175,16 +191,39 @@ def ceof(data, nkp = 10):
     l = lamda.conjugate().T; k = np.argsort(l)
     lamda, loadings = np.flip(l[k]), np.fliplr(loadings[:,k])
     loadings = loadings[:,:nkp]
-    
-    per = lamda.real*100/np.sum(lamda.real)
-    pcs = np.dot(data_hilbert,loadings)
-    
+    # In case there were nan values in the orginal data, we need to perform the approach below:
     load_real[~nan_values,:] = loadings.real.copy()
     load_imag[~nan_values,:] = loadings.imag.copy()
     load = load_real + 1j*load_imag
+    modes = load.reshape((len(lat),len(lon), nkp))
+    
+    per = lamda.real*100/np.sum(lamda.real)
+    per = per[:nkp].copy()
+    pcs = np.dot(data_hilbert,loadings)
+    
+    sp_amp, sp_phase, t_amp, t_phase = amplitude_phase(load, pcs)
+    sp_amp   = sp_amp.reshape((len(lat),len(lon), nkp))
+    sp_phase = sp_phase.reshape((len(lat),len(lon), nkp))    
+    
     print('Done! \U0001F600')
     
-    return lamda, load, pcs, per
+    dims = ["lat", "lon", "nkp", "time"]
+    ds = xr.Dataset({"per":(dims[2], per),"modes":(dims[:-1], modes),"sp_amp":(dims[:-1], sp_amp),
+                    "sp_phase":(dims[:-1], sp_phase),"pcs":(dims[-2:][::-1], pcs),"t_amp":(dims[-2:][::-1], t_amp),
+                    "t_phase":(dims[-2:][::-1], t_phase)},
+                    coords={"lat":(dims[0], lat), "lon":(dims[1], lon), "nkp":(dims[2], np.arange(nkp)),
+                           "time":(dims[3], np.arange(len(data_ceof)))})
+
+    return ds
+
+def org_data_ceof(lon, lat, data):
+    data_ceof = np.zeros((len(data), len(lon)*len(lat)))*np.nan
+    k = 0
+    for i in range(len(lat)):
+        for j in range(len(lon)):
+            data_ceof[:, k] = data[:, i, j]
+            k += 1
+    return data_ceof
 
 def amplitude_phase(evecs, amp):
     ''' Complex (Hilbert) EOF
@@ -219,12 +258,13 @@ def amplitude_phase(evecs, amp):
     
     return sp_amp, sp_phase, t_amp, t_phase 
 
-def reconstruct_ceof(amp, modes, n, day):
+def reconstruct_ceof(data_mean, amp, modes, n, day):
     ''' Reconstrucion of CEOF modes individually following Majumder et al. (2019)
     
     Written by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Apr/2021 
     ===========================================================================
     Inputs:
+    -> data_mean: time-mean of the original data [lat, lon] (e.g., np.nanmean(data,axis=0))
     -> amp:    amplitude or coefficient of expansion [time, n]
     -> modes:  eigenvector or loading [lat, lon, n]
     -> n:      mode to be reconstructed. 0 is the first
@@ -238,5 +278,5 @@ def reconstruct_ceof(amp, modes, n, day):
     # Majumder et al (2019) compute the reconstructed CEOF field as the real part of the multiplication between
     # the coefficient of expansion (i.e., amplitude) and the complex conjugate of the loading (i.e., mode)
     Rec_ceof = amp[day,n]*np.conj(modes[:,:,n])
-    return Rec_ceof.real
-
+    Rec_return = Rec_ceof.real + data_mean
+    return Rec_return
