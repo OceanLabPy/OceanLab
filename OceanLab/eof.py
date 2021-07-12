@@ -133,8 +133,7 @@ def ceof(lon, lat, data, nkp = 10):
     ''' Complex (Hilbert) EOF
     First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
     (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
-    
-    Translated to Python by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Mar/2021
+    Version 1.0.0 on 15/Mar/2021
     ==============================================================================
     Inputs:
     -> lon: longitudes (array)
@@ -154,10 +153,10 @@ def ceof(lon, lat, data, nkp = 10):
     -> t_amp:    Temporal amplitude [time, nkp]
     -> t_phase:  Temporal phase [time, nkp]    
     ==============================================================================
-    Version 2.0.0 by Felipe Vilela da Silva on 25/May/2021. 
+    Version 2.0.0 on 25/May/2021. 
         Now, it is possible to input data with NaN values. 
     ==============================================================================
-    Version 3.0.0 by Felipe Vilela da Silva on 17/Jun/2021. 
+    Version 3.0.0 on 17/Jun/2021. 
         New modifications:
         (i)  The function organizes the data as time vs space and subtract the mean field in each coordinate
         (ii) It returns all the variables related to CEOF in a DataArray
@@ -228,7 +227,6 @@ def amplitude_phase(evecs, amp):
     First written in MATLAB and found in the webpage below 
     (https://www.jsg.utexas.edu/fu/files/GEO391-W11-CEOF.pdf)
     
-    Translated to Python by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Mar/2021 
     ===========================================================================
     Inputs:
     -> evecs: First nkp Complex Loadings or eigenvectors [space, nkp]
@@ -259,7 +257,6 @@ def amplitude_phase(evecs, amp):
 def reconstruct_ceof(data_mean, amp, modes, n, day):
     ''' Reconstrucion of CEOF modes individually following Majumder et al. (2019)
     
-    Written by Felipe Vilela da Silva @ IMAS, UTas, AU on 15/Apr/2021 
     ===========================================================================
     Inputs:
     -> data_mean: time-mean of the original data [lat, lon] (e.g., np.nanmean(data,axis=0))
