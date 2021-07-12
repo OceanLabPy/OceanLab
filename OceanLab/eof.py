@@ -1,4 +1,8 @@
 import numpy as np
+import scipy.linalg as la
+from dask import delayed
+from scipy.signal import hilbert
+import xarray as xr
 
 # functions
 #=========================================
@@ -125,12 +129,6 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 #=========================================
 # PERFORM COMPLEX EOF
 #=========================================
-from scipy.signal import hilbert
-import scipy.linalg as la
-from dask import delayed
-from scipy.signal import hilbert
-import xarray as xr
-
 def ceof(lon, lat, data, nkp = 10):
     ''' Complex (Hilbert) EOF
     First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
