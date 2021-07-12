@@ -165,7 +165,7 @@ def ceof(lon, lat, data, nkp = 10):
     data_ceof = org_data_ceof(lon, lat, data)
     # We need to remove the mean field (i.e., the trend) in each coordinate to 
     # evaluate the variability 
-    data_ceof = data_ceof - np.nanmean(data_ceof,axis=0)
+    data_ceof = data_ceof - data_ceof.mean('time')
     
     # The variables below are useful later
     load_real = np.zeros([data_ceof.shape[1], nkp])*np.nan
@@ -214,12 +214,11 @@ def ceof(lon, lat, data, nkp = 10):
     return ds
 
 def org_data_ceof(lon, lat, data):
-    data_ceof = np.zeros((len(data), len(lon)*len(lat)))*np.nan
-    k = 0
-    for i in range(len(lat)):
-        for j in range(len(lon)):
-            data_ceof[:, k] = data[:, i, j]
-            k += 1
+    ''' Version 2.0.0 on 12/Jul/2021: Now, org_data_ceof works faster and returns a DataArray '''
+    dims = ["time", "lat", "lon"]
+    datxarray = a = xr.Dataset({"data_latlon": (dims, data)}, 
+                               coords={'lat':(dims[1], lat), 'lon':(dims[2], lon)})
+    data_ceof = datxarray.stack(lat_lon=("lat", "lon")).data_latlon
     return data_ceof
 
 def amplitude_phase(evecs, amp):
