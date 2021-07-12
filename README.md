@@ -26,7 +26,7 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab/exa
   - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated from Cesar Rocha Matlab version);
 - **UTILS**
   - *argdistnear()*: Searchs the position of the closest points in an array to a reference point;
-  - *meaneddy()*: Performs an eddy-mean decomposing with a low-pass filter;
+  - *meaneddy()*: Performs an eddy-mean decomposition with a low-pass filter;
 
 
 ## Contributors
