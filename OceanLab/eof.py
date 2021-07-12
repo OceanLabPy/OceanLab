@@ -131,27 +131,27 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 #=========================================
 def ceof(lon, lat, data, nkp = 10):
     ''' Complex (Hilbert) EOF
+    Note: the mean field in each coordinate is subtracted within the function.
+    Do not remove the time-mean before inputing in the fuction.
+    
     First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
     (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
     Version 1.0.0 on 15/Mar/2021
     ==============================================================================
-    Inputs:
-    -> lon: longitudes (array)
-    -> lat: latitude (array)
-    -> data: original data set [time, lat, lon]
-      -> Note: the mean field in each coordinate is subtracted within the function
-      -> Thus, do not remove the time-mean before inputing in the fuction.
-    -> nkp:  number of modes to output (default = 10)
+    INPUT:
+       lon     = longitudes (array)
+       lat     = latitude (array)
+       data    = original data set [time, lat, lon]
+       nkp     = number of modes to return (default = 10)
 
-    ==============================================================================
-    Outputs in a DataArray:
-    -> per:   percent variance explained (real eigenvalues)
-    -> modes:  First nkp Complex Loadings or eigenvectors [lat, lon, nkp]
-    -> sp_amp:   Spatial amplitude [lat, lon, nkp]
-    -> sp_phase: Spatial phase [lat, lon, nkp]
-    -> pcs:   First nkp Complex Principal Components or amplitudes [time, nkp]
-    -> t_amp:    Temporal amplitude [time, nkp]
-    -> t_phase:  Temporal phase [time, nkp]    
+    OUTPUT:
+       per     = percent variance explained (real eigenvalues)
+       modes   = first nkp complex loadings or eigenvectors [lat, lon, nkp]
+       SpAmp   = spatial amplitude [lat, lon, nkp]
+       SpPhase = spatial phase [lat, lon, nkp]
+       pcs     = first nkp complex principal components or amplitudes [time, nkp]
+       TAmp    = temporal amplitude [time, nkp]
+       TPhase  = temporal phase [time, nkp]    
     ==============================================================================
     Version 2.0.0 on 25/May/2021. 
         Now, it is possible to input data with NaN values. 
@@ -205,9 +205,9 @@ def ceof(lon, lat, data, nkp = 10):
     print('Done! \U0001F600')
     
     dims = ["lat", "lon", "nkp", "time"]
-    ds = xr.Dataset({"per":(dims[2], per),"modes":(dims[:-1], modes),"sp_amp":(dims[:-1], sp_amp),
-                    "sp_phase":(dims[:-1], sp_phase),"pcs":(dims[-2:][::-1], pcs),"t_amp":(dims[-2:][::-1], t_amp),
-                    "t_phase":(dims[-2:][::-1], t_phase)},
+    ds = xr.Dataset({"per":(dims[2], per),"modes":(dims[:-1], modes),"SpAmp":(dims[:-1], sp_amp),
+                    "SpPhase":(dims[:-1], sp_phase),"pcs":(dims[-2:][::-1], pcs),"TAmp":(dims[-2:][::-1], t_amp),
+                    "TPhase":(dims[-2:][::-1], t_phase)},
                     coords={"lat":(dims[0], lat), "lon":(dims[1], lon), "nkp":(dims[2], np.arange(nkp)),
                            "time":(dims[3], np.arange(len(data_ceof)))})
 
@@ -227,50 +227,52 @@ def amplitude_phase(evecs, amp):
     (https://www.jsg.utexas.edu/fu/files/GEO391-W11-CEOF.pdf)
     
     ===========================================================================
-    Inputs:
-    -> evecs: First nkp Complex Loadings or eigenvectors [space, nkp]
-    -> amp:   First nkp Complex Principal Components or amplitudes [time, nkp]
+    INPUT:
+       evecs   = first nkp complex loadings or eigenvectors [lat, lon, nkp]
+       amp     = first nkp complex principal components or amplitudes [time, nkp]
 
-    ===========================================================================
-    Outputs:
-    -> sp_amp:   Spatial amplitude [space, nkp]
-    -> sp_phase: Spatial phase [space, nkp]
-    -> t_amp:    Temporal amplitude [time, nkp]
-    -> t_phase:  Temporal phase [time, nkp]
+    OUTPUT:
+       SpAmp   = spatial amplitude [lat, lon, nkp]
+       SpPhase = spatial phase [lat, lon, nkp]
+       TAmp    = temporal amplitude [time, nkp]
+       TPhase  = temporal phase [time, nkp]
     ===========================================================================
     '''
     # Spatial amplitude
-    sp_amp = pow(np.multiply(evecs, np.conj(evecs)),0.5)
+    SpAmp = pow(np.multiply(evecs, np.conj(evecs)),0.5)
     theta = np.arctan2(evecs.imag, evecs.real)
     # Spatial phase
-    sp_phase = np.divide(np.multiply(theta, 180), np.pi)
+    SpPhase = np.divide(np.multiply(theta, 180), np.pi)
 
     # Temporal amplitude
-    t_amp = pow(np.multiply(amp, np.conj(amp)), 0.5)
+    TAmp = pow(np.multiply(amp, np.conj(amp)), 0.5)
     # Temporal phase
     phit = np.arctan2(amp.imag, amp.real)
-    t_phase = np.divide(np.multiply(phit, 180), np.pi)
+    TPhase = np.divide(np.multiply(phit, 180), np.pi)
     
-    return sp_amp, sp_phase, t_amp, t_phase 
+    return SpAmp, SpPhase, TAmp, TPhase 
 
-def reconstruct_ceof(data_mean, amp, modes, n, day):
-    ''' Reconstrucion of CEOF modes individually following Majumder et al. (2019)
+def reconstruct_ceof(DataMean, amp, modes, n, day):
+    ''' Reconstrucion of daily CEOF modes individually similar to Majumder et al. (2019).
+    Here, the mean field in each coordinate is added within the function.
+    Besides, each mode is reconstructed individually, instead of computing the sum of the  
+    reconstruction of different modes.
     
-    ===========================================================================
-    Inputs:
-    -> data_mean: time-mean of the original data [lat, lon] (e.g., np.nanmean(data,axis=0))
-    -> amp:    amplitude or coefficient of expansion [time, n]
-    -> modes:  eigenvector or loading [lat, lon, n]
-    -> n:      mode to be reconstructed. 0 is the first
-    -> day:    day to be reconstructed. 0 is the first
-    ===========================================================================
-    Output:
-    -> Rec_ceof: Reconstruction of the CEOF field [time, lat, lon]
-    ===========================================================================
+    =========================================================================================
+    INPUT:
+       DataMean = time-mean of the original data [lat, lon] (e.g., np.nanmean(data,axis=0))
+       amp      = principal components or amplitudes [time, nkp]
+       mode     = eigenvectors or loadings [lat, lon, nkp]
+       n        = mode of variability to be reconstructed
+       day      = day to be reconstructed.
+
+    OUTPUT:
+       RecCEOF  = reconstruction of a CEOF mode on a chosen day [lat, lon]
+    =========================================================================================
     '''   
     
     # Majumder et al (2019) compute the reconstructed CEOF field as the real part of the multiplication between
     # the coefficient of expansion (i.e., amplitude) and the complex conjugate of the loading (i.e., mode)
     Rec_ceof = amp[day,n]*np.conj(modes[:,:,n])
-    Rec_return = Rec_ceof.real + data_mean
-    return Rec_return
+    RecCEOF = Rec_ceof.real + DataMean
+    return RecCEOF
