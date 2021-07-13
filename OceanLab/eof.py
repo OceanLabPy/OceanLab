@@ -216,8 +216,8 @@ def ceof(lon, lat, data, nkp = 10):
 def org_data_ceof(lon, lat, data):
     ''' Version 2.0.0 on 12/Jul/2021: Now, org_data_ceof works faster and returns a DataArray '''
     dims = ["time", "lat", "lon"]
-    datxarray = a = xr.Dataset({"data_latlon": (dims, data)}, 
-                               coords={'lat':(dims[1], lat), 'lon':(dims[2], lon)})
+    datxarray = xr.Dataset({"data_latlon": (dims, data)}, 
+                           coords={'lat':(dims[1], lat), 'lon':(dims[2], lon)})
     data_ceof = datxarray.stack(lat_lon=("lat", "lon")).data_latlon
     return data_ceof
 
