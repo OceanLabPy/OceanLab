@@ -132,11 +132,12 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 def ceof(lon, lat, data, nkp = 10):
     ''' Complex (Hilbert) EOF
     Note: the mean field in each coordinate is subtracted within the function.
-    Do not remove the time-mean before inputing in the fuction.
+    Do not subtract the time-mean field before inputing.
+    NaN values are removed in the algorithm. 
+    The user can input the data as it is.
     
     First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
     (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
-    Version 1.0.0 on 15/Mar/2021
     ==============================================================================
     INPUT:
        lon     = longitudes (array)
@@ -145,21 +146,15 @@ def ceof(lon, lat, data, nkp = 10):
        nkp     = number of modes to return (default = 10)
 
     OUTPUT:
+       The variables below return inside a DataArray.
        per     = percent variance explained (real eigenvalues)
        modes   = first nkp complex loadings or eigenvectors [lat, lon, nkp]
        SpAmp   = spatial amplitude [lat, lon, nkp]
        SpPhase = spatial phase [lat, lon, nkp]
        pcs     = first nkp complex principal components or amplitudes [time, nkp]
        TAmp    = temporal amplitude [time, nkp]
-       TPhase  = temporal phase [time, nkp]    
+       TPhase  = temporal phase [time, nkp]
     ==============================================================================
-    Version 2.0.0 on 25/May/2021. 
-        Now, it is possible to input data with NaN values. 
-    ==============================================================================
-    Version 3.0.0 on 17/Jun/2021. 
-        New modifications:
-        (i)  The function organizes the data as time vs space and subtract the mean field in each coordinate
-        (ii) It returns all the variables related to CEOF in a DataArray
     ''' 
     # Organizing the data as time vs space
     data_ceof = org_data_ceof(lon, lat, data)
@@ -172,7 +167,7 @@ def ceof(lon, lat, data, nkp = 10):
     load_imag = np.zeros([data_ceof.shape[1], nkp])*np.nan
     # It is necessary to remove the nan values of the matrix to solve the eigenvalue problem
     nan_values = np.isnan(data_ceof[0,:]) # We can just look at each coordinate along a single time
-    data_ceof = data_ceof[:,~nan_values]   # Then, we remove all these coordinates in all of the occurences
+    data_ceof = data_ceof[:,~nan_values]  # Then, we remove all these coordinates in all of the occurences
     
     ntim, npt = data_ceof.shape
     
@@ -214,7 +209,6 @@ def ceof(lon, lat, data, nkp = 10):
     return ds
 
 def org_data_ceof(lon, lat, data):
-    ''' Version 2.0.0 on 12/Jul/2021: Now, org_data_ceof works faster and returns a DataArray '''
     dims = ["time", "lat", "lon"]
     datxarray = xr.Dataset({"data_latlon": (dims, data)}, 
                            coords={'lat':(dims[1], lat), 'lon':(dims[2], lon)})
