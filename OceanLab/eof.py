@@ -130,7 +130,7 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 # PERFORM COMPLEX EOF
 #=========================================
 def ceof(lon, lat, data, nkp = 10):
-    ''' Complex (Hilbert) EOF
+    ''' Complex (Hilbert) EOF to detect propagating features: waves, meanders, etc.
     Note: the mean field in each coordinate is subtracted within the function.
     Do not subtract the time-mean field before inputing.
     NaN values are removed in the algorithm. 
@@ -157,7 +157,7 @@ def ceof(lon, lat, data, nkp = 10):
     ==============================================================================
     ''' 
     # Organizing the data as time vs space
-    data_ceof = org_data_ceof(lon, lat, data)
+    data_ceof = _org_data_ceof(lon, lat, data)
     # We need to remove the mean field (i.e., the trend) in each coordinate to 
     # evaluate the variability 
     data_ceof = data_ceof - data_ceof.mean('time')
@@ -193,7 +193,7 @@ def ceof(lon, lat, data, nkp = 10):
     per = per[:nkp].copy()
     pcs = np.dot(data_hilbert,loadings)
     
-    sp_amp, sp_phase, t_amp, t_phase = amplitude_phase(load, pcs)
+    sp_amp, sp_phase, t_amp, t_phase = _amplitude_phase(load, pcs)
     sp_amp   = sp_amp.reshape((len(lat),len(lon), nkp))
     sp_phase = sp_phase.reshape((len(lat),len(lon), nkp))    
     
@@ -208,14 +208,14 @@ def ceof(lon, lat, data, nkp = 10):
 
     return ds
 
-def org_data_ceof(lon, lat, data):
+def _org_data_ceof(lon, lat, data):
     dims = ["time", "lat", "lon"]
     datxarray = xr.Dataset({"data_latlon": (dims, data)}, 
                            coords={'lat':(dims[1], lat), 'lon':(dims[2], lon)})
     data_ceof = datxarray.stack(lat_lon=("lat", "lon")).data_latlon
     return data_ceof
 
-def amplitude_phase(evecs, amp):
+def _amplitude_phase(evecs, amp):
     ''' Complex (Hilbert) EOF
     First written in MATLAB and found in the webpage below 
     (https://www.jsg.utexas.edu/fu/files/GEO391-W11-CEOF.pdf)
