@@ -3,6 +3,7 @@ import scipy.linalg as la
 from dask import delayed
 from scipy.signal import hilbert
 import xarray as xr
+from dask.distributed import Client, LocalCluster
 
 # functions
 #=========================================
@@ -129,7 +130,7 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 #=========================================
 # PERFORM COMPLEX EOF
 #=========================================
-def ceof(lon, lat, data, nkp = 10):
+def ceof(lon, lat, data, nkp = 10, parallel = True):
     ''' Complex (Hilbert) EOF to detect propagating features: waves, meanders, etc.
     Note: the mean field in each coordinate is subtracted within the function.
     Do not subtract the time-mean field before inputing.
@@ -140,22 +141,29 @@ def ceof(lon, lat, data, nkp = 10):
     (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
     ==============================================================================
     INPUT:
-       lon     = longitudes (array)
-       lat     = latitude (array)
-       data    = original data set [time, lat, lon]
-       nkp     = number of modes to return (default = 10)
+       lon      = longitudes (array)
+       lat      = latitude (array)
+       data     = original data set [time, lat, lon]
+       nkp      = number of modes to return (default = 10)
+       parallel = create a standard client kernel for parallel computing
+                  [switch parallel to False, in case you created your own client]
 
     OUTPUT:
        The variables below return inside a DataArray.
-       per     = percent variance explained (real eigenvalues)
-       modes   = first nkp complex loadings or eigenvectors [lat, lon, nkp]
-       SpAmp   = spatial amplitude [lat, lon, nkp]
-       SpPhase = spatial phase [lat, lon, nkp]
-       pcs     = first nkp complex principal components or amplitudes [time, nkp]
-       TAmp    = temporal amplitude [time, nkp]
-       TPhase  = temporal phase [time, nkp]
+       per      = percent variance explained (real eigenvalues)
+       modes    = first nkp complex loadings or eigenvectors [lat, lon, nkp]
+       SpAmp    = spatial amplitude [lat, lon, nkp]
+       SpPhase  = spatial phase [lat, lon, nkp]
+       pcs      = first nkp complex principal components or amplitudes [time, nkp]
+       TAmp     = temporal amplitude [time, nkp]
+       TPhase   = temporal phase [time, nkp]
     ==============================================================================
     ''' 
+    # Configure client for parallel computing
+    if parallel:
+        cluster = LocalCluster()
+        client  = Client(cluster)
+    
     # Organizing the data as time vs space
     data_ceof = _org_data_ceof(lon, lat, data)
     # We need to remove the mean field (i.e., the trend) in each coordinate to 
