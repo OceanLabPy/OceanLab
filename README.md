@@ -24,6 +24,8 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab/exa
 - **EOF**
   - *eoft()*: Calculates the Empirical Orthogonal Functions;
   - *my_eof_interp()*: Fillgaps on matrix based on EOFs (translated from Cesar Rocha Matlab version);
+  - *ceof()*: Performs the Complex (or Hilbert) Empirical Orthogonal Functions decomposition;
+  - *reconstruct_ceof()*: Reconstructs the CEOF modes individually;
 - **UTILS**
   - *argdistnear()*: Searchs the position of the closest points in an array to a reference point;
   - *meaneddy()*: Performs an eddy-mean decomposition with a low-pass filter;
