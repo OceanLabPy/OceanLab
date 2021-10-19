@@ -4,7 +4,7 @@ Package of Python scripts for Oceanography  (Python +3.6)
 
 ## Code Example
 
-Check `examples` folder in our [github repository](tree/master/examples).
+Check `examples` folder in our [github repository](github.com/OceanLabPy/OceanLab/tree/master/examples).
 
 ## Installation
 
