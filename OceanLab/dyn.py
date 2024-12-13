@@ -3,6 +3,73 @@ import numpy as np
 import seawater as sw
 
 # ===========================================================
+# SURFACE AGEOSTROPHIC VELOCITY
+# ===========================================================
+def curvature(ssh_grad, dxt, dyt):
+    ''' Curvature of the sea surface height contours
+    ==============================================================================
+    INPUT:
+       SSH = sea surface height gradient [Y,X]
+       dxt = zonal distance between the grid cells in meter [Y,X]
+       dyt = meridional distance between the grid cells in meter [Y,X]
+
+    OUTPUT:
+       k = curvature of the flow
+    ==============================================================================
+    ''' 
+
+    ssh_grad_y, ssh_grad_x = ssh_grad[0], ssh_grad[1]
+
+    # Terms in the norminator
+    nominator_1st = (np.gradient(ssh_grad_y/dyt)[0]/dyt)*(ssh_grad_x/dxt)**2
+    nominator_2nd = (np.gradient(ssh_grad_x/dxt)[1]/dxt)*(ssh_grad_y/dyt)**2
+    nominator_3rd = 2*(np.gradient(ssh_grad_y/dyt)[1]/dxt)*(ssh_grad_x/dxt)*(ssh_grad_y/dyt)
+
+    # Terms in the denominator
+    denominator_1st = (ssh_grad_x/dxt)**2
+    denominator_2nd = (ssh_grad_y/dyt)**2
+    denominator = pow(denominator_1st + denominator_2nd, 3/2)
+    
+    k = (-1*nominator_1st - 1*nominator_2nd + 2*nominator_3rd)/denominator
+    
+    return k
+
+def ageostrophic_vel(LON, LAT, SSH):
+    ''' Surface ageostrophic velocity from gradient wind balance through the 
+    combination of the surface geostrophic velocity and curvature of the flow
+    ==============================================================================
+    INPUT:
+       LON = longitudes [Y,X]
+       LAT = latitude [Y,X]
+       SSH = sea surface height in meter [Y,X]
+
+    OUTPUT:
+       u_ag_vel = zonal component of the surface ageostrophic velocity
+       v_ag_vel = meridional component of the surface ageostrophic velocity
+    ==============================================================================
+    ''' 
+    g = 9.8
+    f = sw.f(LAT)    
+    [trash,dlonx] = np.gradient(LON)
+    dx            = dlonx*np.cos(LAT*np.pi/180)*111195.
+    [dlaty,trash] = np.gradient(LAT)
+    dy            = dlaty*111195.
+    SSH_gradient = np.gradient(SSH)
+    k            = curvature(SSH_gradient, dx, dy)
+
+    ## Estimating the surface geostrophic velocity from SSH
+    u_geo_vel = (-g/f)*(SSH_gradient[0]/dy)
+    v_geo_vel = (g/f)*(SSH_gradient[1]/dx)
+    ## Reconstructing the surface velocity from the combinantion of the geostrophic velocity and curvature of the flow
+    u_total   = (2*u_geo_vel)/(1 + np.sqrt(1 + 4*k*np.sqrt(u_geo_vel**2 + v_geo_vel**2)/f))
+    v_total   = (2*v_geo_vel)/(1 + np.sqrt(1 + 4*k*np.sqrt(u_geo_vel**2 + v_geo_vel**2)/f))
+    ## Computing the surface ageostrophic velocity as the difference between the total and geostrophic fields
+    u_ag_vel = u_total - u_geo_vel
+    v_ag_vel = v_total - v_geo_vel
+
+    return u_ag_vel, v_ag_vel
+
+# ===========================================================
 # DYNAMICAL MODES AMPLITUDE
 # ===========================================================
 def vmode_amp(A,vi):
