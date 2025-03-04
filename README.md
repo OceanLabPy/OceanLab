@@ -4,7 +4,7 @@ Package of Python scripts for Oceanography  (Python +3.6)
 
 ## Code Example
 
-Check `examples` folder in our [github repository](github.com/iuryt/OceanLab/examples).
+Check `examples` folder in our [github repository](../../tree/master/examples).
 
 ## Installation
 
@@ -28,7 +28,7 @@ Check `examples` folder in our [github repository](github.com/iuryt/OceanLab/exa
   - *reconstruct_ceof()*: Reconstructs the CEOF modes individually;
 - **UTILS**
   - *argdistnear()*: Searchs the position of the closest points in an array to a reference point;
-  - *meaneddy()*: Performs an eddy-mean decomposing with a low-pass filter;
+  - *meaneddy()*: Performs an eddy-mean decomposition with a low-pass filter;
 
 
 ## Contributors
