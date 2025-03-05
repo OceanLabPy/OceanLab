@@ -33,4 +33,4 @@ Check `examples` folder in our [github repository](../../tree/master/examples).
 
 ## Contributors
 
-Everyone can contribute to this code. Some of functions were based on Filipe Fernandes or Cesar Rocha functions and some of them were created with help of Dante C. Napolitano, Hélio M. R. Almeida and Wandrey Watanabe at Ocean Dynamics Lab of University of São Paulo (USP).
+Everyone can contribute to this code. Some of functions were based on Filipe Fernandes or Cesar Rocha functions and some of them were created with help of Dante C. Napolitano, Hélio M. R. Almeida, Wandrey Watanabe, and Felipe Vilela-Silva at Ocean Dynamics Lab of University of São Paulo (USP).
