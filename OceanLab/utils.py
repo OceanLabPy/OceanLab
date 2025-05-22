@@ -2,8 +2,7 @@ import numpy as np
 import scipy.signal as sg
 import xarray as xr
 
-import dask
-from dask.distributed import Client, progress
+from dask.distributed import Client
 
 ##### User functions
 #=============================================================================

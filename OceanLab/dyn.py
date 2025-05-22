@@ -396,7 +396,7 @@ def eqmodes(N2,z,nm,lat,pmodes=False):
     # F_j(z)=-g.he_j d/dzS_j
     #
     ####
-    if pmodes==True:
+    if pmodes:
         Fi=np.zeros(Si.shape)
         for i in np.arange(nm):
             Fi[1:-1,i] =\
