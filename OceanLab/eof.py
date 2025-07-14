@@ -44,7 +44,7 @@ def eoft(trmat,nm=None):
     amp = np.dot(evecs_norm.T,trmat)
 
     #if was chosen a number of eigenvectors
-    if nm!=None:
+    if nm is not None:
         evecs_norm = evecs_norm[:,:nm]
         evals_perc = evals_perc[:nm]
         amp        = amp[:nm,:]
@@ -117,7 +117,7 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
           print(err)
           if err < errmin:
              break
-       if repmax!=None:
+       if repmax is not None:
             if rep>=repmax:
                 break
        rep += 1
@@ -188,7 +188,8 @@ def ceof(lon, lat, data, nkp = 10, parallel = True):
     print('3: Solving the eigenvalue problem')
     lamda, loadings = delayed(la.eig)(c).compute() # lamda: eigenvalue, loadings: eigenvectors
     
-    l = lamda.conjugate().T; k = np.argsort(l)
+    l = lamda.conjugate().T
+    k = np.argsort(l)
     lamda, loadings = np.flip(l[k]), np.fliplr(loadings[:,k])
     loadings = loadings[:,:nkp]
     # In case there were nan values in the orginal data, we need to perform the approach below:

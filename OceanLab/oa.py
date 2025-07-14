@@ -94,12 +94,12 @@ def vectoa(Xg,Yg,X,Y,U,V,corrlenx,corrleny,err,b=0):
     tc = np.array(tc)
     tc.shape = ppc[0].shape
     d2=((np.tile(xc,(n,1)).T-np.tile(x,(nv,1)))**2+(np.tile(yc,(n,1)).T-np.tile(y,(nv,1)))**2)
-    R=np.exp(-lambd*d2)+bmo;
+    R=np.exp(-lambd*d2)+bmo
 
     P=np.zeros((nv,2*n))
     # streamfunction-velocity covariance
-    P[:,0:n]=np.sin(tc)*np.sqrt(d2)*R;
-    P[:,n:2*n]=-np.cos(tc)*np.sqrt(d2)*R;
+    P[:,0:n]=np.sin(tc)*np.sqrt(d2)*R
+    P[:,n:2*n]=-np.cos(tc)*np.sqrt(d2)*R
 
     PSI=np.dot(P,np.linalg.solve(A,uv))   # solvi the linear system
     PSI=PSI.reshape(nv2,nv1).T
@@ -163,7 +163,7 @@ def scaloa(xc, yc, x, y, t=[], corrlenx=None,corrleny=None, err=None, zc=None):
     # Gauss-Markov to get the weights that minimize the variance (OI).
     tp = None
     ep = 1 - np.sum(C.T * np.linalg.solve(A, C.T), axis=0) / (1 - err)
-    if any(t)==True: ##### was t!=None:
+    if any(t): ##### was t!=None:
         t = np.reshape(t, (n, 1))
         tp = np.dot(C, np.linalg.solve(A, t))
         #if 0: # NOTE: `scaloa2.m`
@@ -174,7 +174,7 @@ def scaloa(xc, yc, x, y, t=[], corrlenx=None,corrleny=None, err=None, zc=None):
         #  tp = tp + mD * np.ones(tp.shape)
         return tp, ep
 
-    if any(t)==False: ##### was t==None:
+    if not any(t): ##### was t==None:
         print("Computing just the interpolation errors.")
         #Normalized mean error. Taking the squared root you can get the
         #interpolation error in percentage.
