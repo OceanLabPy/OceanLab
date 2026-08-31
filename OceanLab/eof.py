@@ -1,9 +1,7 @@
 import numpy as np
 import scipy.linalg as la
-from dask import delayed
 from scipy.signal import hilbert
 import xarray as xr
-from dask.distributed import Client, LocalCluster
 
 # functions
 #=========================================
@@ -130,14 +128,14 @@ def my_eof_interp(M,nmodes,errmin=1e-15,repmax=None):
 #=========================================
 # PERFORM COMPLEX EOF
 #=========================================
-def ceof(lon, lat, data, nkp = 10, parallel = True):
+def ceof(lon, lat, data, nkp = 10):
     ''' Complex (Hilbert) EOF to detect propagating features: waves, meanders, etc.
     Note: the mean field in each coordinate is subtracted within the function.
     Do not subtract the time-mean field before inputing.
-    NaN values are removed in the algorithm. 
+    NaN values are removed in the algorithm.
     The user can input the data as it is.
-    
-    First written in MATLAB and found in Prof. Daniel J. Vimont webpage 
+
+    First written in MATLAB and found in Prof. Daniel J. Vimont webpage
     (https://www.aos.wisc.edu/~dvimont/matlab/Stat_Tools/complex_eof.html)
     ==============================================================================
     INPUT:
@@ -145,8 +143,6 @@ def ceof(lon, lat, data, nkp = 10, parallel = True):
        lat      = latitude (array)
        data     = original data set [time, lat, lon]
        nkp      = number of modes to return (default = 10)
-       parallel = create a standard client kernel for parallel computing
-                  [switch parallel to False, in case you created your own client]
 
     OUTPUT:
        The variables below return inside a DataArray.
@@ -158,12 +154,7 @@ def ceof(lon, lat, data, nkp = 10, parallel = True):
        TAmp     = temporal amplitude [time, nkp]
        TPhase   = temporal phase [time, nkp]
     ==============================================================================
-    ''' 
-    # Configure client for parallel computing
-    if parallel:
-        cluster = LocalCluster()
-        client  = Client(cluster)
-    
+    '''
     # Organizing the data as time vs space
     data_ceof = _org_data_ceof(lon, lat, data)
     # We need to remove the mean field (i.e., the trend) in each coordinate to 
@@ -184,9 +175,9 @@ def ceof(lon, lat, data, nkp = 10, parallel = True):
     data_hilbert = hilbert(data_ceof)
     # Compute the covariance matrix in the Hilbert transform
     print('2: Computing covariance matrix')
-    c = delayed(np.dot)(data_hilbert.conjugate().T, data_hilbert).compute()/ntim
+    c = np.dot(data_hilbert.conjugate().T, data_hilbert)/ntim
     print('3: Solving the eigenvalue problem')
-    lamda, loadings = delayed(la.eig)(c).compute() # lamda: eigenvalue, loadings: eigenvectors
+    lamda, loadings = la.eig(c) # lamda: eigenvalue, loadings: eigenvectors
     
     l = lamda.conjugate().T
     k = np.argsort(l)

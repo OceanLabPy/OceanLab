@@ -2,8 +2,6 @@ import numpy as np
 import scipy.signal as sg
 import xarray as xr
 
-from dask.distributed import Client
-
 ##### User functions
 #=============================================================================
 # NEAREST DISTANCE
@@ -132,30 +130,5 @@ def meaneddy(prop,days=60,ndim=1,DataArray=False,timedim=None):
 
     return m_prop,p_prop
 #=============================================================================
-
-##### Functions for relative imports
-# =============================================================================
-# KERNEL FOR PARALLEL COMPUTING
-# =============================================================================
-def _parallel_client(cpu_params=dict(tpw=2,nw=4,ml=7.5)):
-    """
-    Create client kernel for parallel computing
-    ====================================================
-    INPUT:
-        -> cpu_params: dict containing floats with keys
-            -> tpw: threads_per_worker
-            -> nw: n_workers
-            -> ml: memory_limit per worker [GB]
-    OUTPUT:
-        -> client: configuration of parallel computing
-    ====================================================
-    """
-
-    client = Client(threads_per_worker=cpu_params['tpw'], 
-                    n_workers=cpu_params['nw'], 
-                    memory_limit=str(cpu_params['ml'])+'GB')
-    return client
-#=============================================================================
-
 
 

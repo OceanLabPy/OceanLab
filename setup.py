@@ -28,11 +28,9 @@ setup(
         "Operating System :: OS Independent",
     ],
     install_requires = [
-        'seawater ~= 3.3',
-        'numpy ~= 1.18',
-        'scipy ~= 1.6',
-        'xarray ~= 0.18',
-        'dask ~= 2021.06',
-        'dask[distributed] ~= 2021.06'
+        'seawater >= 3.3',
+        'numpy >= 1.8.2',
+        'scipy >= 1.6',
+        'xarray >= 0.18',
     ],
 )
